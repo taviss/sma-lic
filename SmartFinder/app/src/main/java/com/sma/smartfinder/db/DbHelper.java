@@ -19,7 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = String
-                .format("CREATE TABLE %s (%s int PRIMARY KEY AUTOINCREMENT, %s text, %s blob, %s int)",
+                .format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s text, %s blob, %s int)",
                         ObjectContract.TABLE,
                         ObjectContract.Column.ID,
                         ObjectContract.Column.OBJECT_NAME,

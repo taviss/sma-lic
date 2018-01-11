@@ -36,6 +36,9 @@
         </receiver>
 
         <activity android:name="com.sma.smartfinder.ObjectFoundActivity"></activity>
+        <activity android:name="com.sma.smartfinder.SettingsActivity"></activity>
+        <activity android:name="com.sma.smartfinder.DetailsActivity"></activity>
+
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.sma.smartfinder.SettingsActivity;
@@ -31,6 +32,8 @@ public class ObjectFinderService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        Log.i(TAG, "objectFinderService#onHandleIntent()");
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         String user = preferences.getString("username", "");
@@ -38,6 +41,7 @@ public class ObjectFinderService extends IntentService {
         String camerasAddress = preferences.getString("camera_server_address", "");
 
         if(camerasAddress.isEmpty()) {
+            Log.i(TAG, "No camera address!");
             startActivity(new Intent(this, SettingsActivity.class));
         }
 
