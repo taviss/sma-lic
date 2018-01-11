@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/settings_title" />
+    <item
+        android:id="@+id/action_detect"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/action_detect_title" />
+    <item
+        android:id="@+id/action_remove"
+        android:icon="@android:drawable/ic_menu_rotate"
+        android:title="@string/action_remove_title" />
+</menu>

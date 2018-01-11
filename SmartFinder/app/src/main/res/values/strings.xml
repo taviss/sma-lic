@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">SmartFinder</string>
+    <string name="toggle_camera">Toggle camera</string>
+    <string name="detect_object">Detect</string>
+    <string name="accept_object">Accept object</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="action_detect_title">Detect new</string>
+    <string name="action_remove_title">Delete object</string>
+
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="cam_server">Camera Network Server Address</string>
+    <string name="learn_server">Training Server Address</string>
+
+</resources>

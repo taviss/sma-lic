@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="sma.com.smartfinder">
+
+    <application
+        android:name="com.sma.smartfinder.SmartFinderApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.sma.smartfinder.DetectActivity" />
+
+        <provider
+            android:name="com.sma.smartfinder.db.ObjectProvider"
+            android:authorities="com.sma.smartfinder.db.ObjectProvider"
+            android:exported="false" />
+
+        <activity android:name="com.sma.smartfinder.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.sma.smartfinder.FindObjectActivity" />
+
+        <service android:name="com.sma.smartfinder.services.ObjectFinderService"></service>
+
+        <receiver android:name="com.sma.smartfinder.receivers.ObjectRecognitionReceiver">
+            <intent-filter>
+                <action android:name="com.sma.smartfinder.action.OBJECT_FOUND" />
+                <action android:name="com.sma.smartfinder.action.NO_OBJECT_FOUND" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name="com.sma.smartfinder.ObjectFoundActivity"></activity>
+    </application>
+
+</manifest>
