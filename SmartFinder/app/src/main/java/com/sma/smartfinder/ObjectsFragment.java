@@ -24,6 +24,9 @@ import android.widget.Toast;
 
 import com.sma.smartfinder.db.ObjectContract;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import sma.com.smartfinder.R;
 
 
@@ -59,6 +62,7 @@ public class ObjectsFragment extends ListFragment implements LoaderManager.Loade
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        System.out.println(l.getItemAtPosition(position));
         DetailsFragment detailsFragment = (DetailsFragment) getFragmentManager().findFragmentById(R.id.fragment_details);
 
         if(detailsFragment != null && detailsFragment.isVisible()) {
@@ -100,13 +104,16 @@ public class ObjectsFragment extends ListFragment implements LoaderManager.Loade
 
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-            if(view.getId() != R.id.list_item_created_at)
-                return false;
 
-            long timestamp = cursor.getLong(columnIndex);
-            CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(timestamp);
-            ((TextView) view).setText(relativeTime);
-
+            if(view.getId() == R.id.list_item_created_at) {
+                long timestamp = cursor.getLong(columnIndex);
+                CharSequence relativeTime = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(new Date(timestamp));
+                ((TextView) view).setText(relativeTime);
+            } else if(view.getId() == R.id.list_item_object_name) {
+                String name = cursor.getString(columnIndex);
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                ((TextView) view).setText(name);
+            }
             return true;
         }
     }

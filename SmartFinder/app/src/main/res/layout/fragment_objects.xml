@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/list_item_content"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,11 +9,13 @@
         android:id="@+id/list_item_object_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:paddingLeft="30dp"
         android:text="Test"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
         android:id="@+id/list_item_created_at"
@@ -21,8 +24,25 @@
         android:layout_alignBaseline="@id/list_item_object_name"
         android:layout_alignBottom="@id/list_item_object_name"
         android:layout_alignParentRight="true"
-        android:text="5 minutes ago"
+        android:text="01/01/2017"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
         android:textColor="@android:color/secondary_text_light"/>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/list_item_object_name"
+        android:id="@+id/space" />
+
+    <ImageView
+        android:id="@+id/arrowImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/space"
+        android:layout_alignParentStart="true"
+        android:visibility="visible"
+        android:background="@android:drawable/ic_menu_send" />
+
 
 </RelativeLayout>

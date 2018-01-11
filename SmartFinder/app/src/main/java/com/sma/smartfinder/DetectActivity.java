@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurgle.camerakit.CameraListener;
 import com.flurgle.camerakit.CameraView;
@@ -75,11 +76,18 @@ public class DetectActivity extends BaseActivity {
 
                 final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
 
-                textViewResult.setText(results.toString());
+                if(results != null && !results.isEmpty()) {
+                    textViewResult.setText(results.toString());
 
-                currentImage = new Pair<>(results.get(0).getTitle(), picture);
+                    currentImage = new Pair<>(results.get(0).getTitle(), picture);
 
-                btnAcceptObject.setVisibility(View.VISIBLE);
+                    btnAcceptObject.setVisibility(View.VISIBLE);
+                } else {
+                    imageViewResult.setImageBitmap(null);
+                    textViewResult.setText("");
+                    btnAcceptObject.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(), "No object detected, try again!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -111,6 +119,9 @@ public class DetectActivity extends BaseActivity {
                         Log.i(TAG, String.format("Inserted: %s", currentImage.first));
                     }
                 }
+                imageViewResult.setImageBitmap(null);
+                textViewResult.setText("");
+                btnAcceptObject.setVisibility(View.INVISIBLE);
             }
         });
 

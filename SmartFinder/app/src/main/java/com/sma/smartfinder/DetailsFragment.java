@@ -2,6 +2,7 @@ package com.sma.smartfinder;
 
 import android.app.Fragment;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -15,10 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sma.smartfinder.db.ObjectContract;
 import com.sma.smartfinder.services.ObjectFinderService;
+
+import java.io.FileOutputStream;
+import java.io.IOError;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import sma.com.smartfinder.R;
 
@@ -26,8 +35,11 @@ public class DetailsFragment extends Fragment {
     private TextView textName, textCreatedAt;
     private ImageView objectView;
     private Button btnLocate;
+    private Button btnDelete;
 
     private Bitmap currentImage;
+
+    private int currentId;
 
     @Nullable
     @Override
@@ -38,13 +50,40 @@ public class DetailsFragment extends Fragment {
         textCreatedAt = (TextView) view.findViewById(R.id.list_item_created_at);
         objectView = (ImageView) view.findViewById(R.id.list_item_object_view);
         btnLocate = (Button) view.findViewById(R.id.btnFindObject);
+        btnDelete = (Button) view.findViewById(R.id.btnDeleteObject);
+
 
         btnLocate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent requestLocateIntent = new Intent(getActivity(), ObjectFinderService.class);
-                requestLocateIntent.putExtra("BitmapImage", currentImage);
-                getActivity().startService(requestLocateIntent);
+                try {
+                    Intent requestLocateIntent = new Intent(getActivity(), ObjectFinderService.class);
+
+                    String filename = "img_locate.png";
+                    FileOutputStream stream = getActivity().openFileOutput(filename, Context.MODE_PRIVATE);
+                    currentImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                    stream.close();
+                    currentImage.recycle();
+
+                    requestLocateIntent.putExtra("locate_image", filename);
+                    getActivity().startService(requestLocateIntent);
+                    //getActivity().startActivity(new Intent(getContext(), FindObjectActivity.class));
+                } catch(IOException e) {
+                    Toast.makeText(getContext(), "There was an error with sending the image to the ObjectFinderService!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int rows = getContext().getContentResolver().delete(ObjectContract.CONTENT_URI, ObjectContract.Column.ID + "=" + currentId, null);
+                if(rows == 1) {
+                    getActivity().finish();
+                } else {
+                    Toast.makeText(getContext(), "There was an error deleting this object, retry!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -76,9 +115,10 @@ public class DetailsFragment extends Fragment {
         String name = cursor.getString(cursor.getColumnIndex(ObjectContract.Column.OBJECT_NAME));
         byte[] blob = cursor.getBlob(cursor.getColumnIndex(ObjectContract.Column.IMG));
         long createdAt = cursor.getLong(cursor.getColumnIndex(ObjectContract.Column.CREATED_AT));
+        currentId = cursor.getInt(cursor.getColumnIndex(ObjectContract.Column.ID));
 
         textName.setText(name);
-        textCreatedAt.setText(DateUtils.getRelativeTimeSpanString(createdAt));
+        textCreatedAt.setText(new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(new Date(createdAt)));
 
         currentImage = BitmapFactory.decodeByteArray(blob, 0, blob.length);
         objectView.setImageBitmap(currentImage);

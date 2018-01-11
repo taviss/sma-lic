@@ -4,6 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 
 import com.sma.smartfinder.SettingsActivity;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,6 +47,15 @@ public class ObjectFinderService extends IntentService {
         if(camerasAddress.isEmpty()) {
             Log.i(TAG, "No camera address!");
             startActivity(new Intent(this, SettingsActivity.class));
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "No camera address!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return;
         }
 
         try {
@@ -57,16 +70,33 @@ public class ObjectFinderService extends IntentService {
             connection.connect();
 
             OutputStream outputStream = connection.getOutputStream();
-            Bitmap data = (Bitmap) intent.getParcelableExtra("BitmapImage");
+            Bitmap bmp = null;
+            String filename = intent.getStringExtra("locate_image");
+            try {
+                FileInputStream is = this.openFileInput(filename);
+                bmp = BitmapFactory.decodeStream(is);
+                is.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-            data.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
             outputStream.close();
 
             waitForResponse(connection.getInputStream());
 
         } catch (IOException e) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            Toast.makeText(getApplicationContext(), "Could not connect to camera server!", Toast.LENGTH_SHORT).show();
+            Log.i(TAG, e.getMessage());
+            startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "Could not connect to camera server!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
 
     }

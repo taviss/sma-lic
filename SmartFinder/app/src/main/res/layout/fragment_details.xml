@@ -7,11 +7,11 @@
 
     <TextView
         android:id="@+id/list_item_object_name"
+        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="-5dp"
         android:text="Test"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
@@ -19,23 +19,24 @@
         android:id="@+id/list_item_created_at"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/list_item_object_name"
-        android:layout_alignBottom="@id/list_item_object_name"
-        android:layout_alignParentRight="true"
-        android:text="5 minutes ago"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/list_item_object_name"
+        android:text="01/01/2017"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-        android:textColor="@android:color/secondary_text_light"/>
+        android:textColor="@android:color/secondary_text_light" />
 
     <ImageView
         android:id="@+id/list_item_object_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="600dp"
+        android:layout_alignBaseline="@id/list_item_created_at"
+        android:layout_alignBottom="@id/list_item_created_at"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignBaseline="@id/list_item_object_name"
-        android:layout_alignBottom="@id/list_item_object_name"
         android:layout_below="@+id/list_item_object_name"
+        android:layout_marginBottom="40dp"
+        android:paddingBottom="40dp"
         app:srcCompat="@mipmap/ic_launcher" />
 
     <Button
@@ -44,5 +45,12 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/list_item_object_view"
         android:text="Locate" />
+
+    <Button
+        android:id="@+id/btnDeleteObject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnFindObject"
+        android:text="Delete" />
 
 </RelativeLayout>

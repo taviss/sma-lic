@@ -92,8 +92,7 @@ public class ObjectProvider extends ContentProvider {
         long rowId = db.insertWithOnConflict(ObjectContract.TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         if(rowId != -1) {
-            long id = values.getAsLong(ObjectContract.Column.ID);
-            ret = ContentUris.withAppendedId(uri, id);
+            ret = ContentUris.withAppendedId(uri, rowId);
             Log.d(TAG, "inserted " + ret);
 
             getContext().getContentResolver().notifyChange(uri, null);
