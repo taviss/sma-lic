@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/camera/camera.iml" filepath="$PROJECT_DIR$/.idea/modules/camera/camera.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/camera-network/camera-network.iml" filepath="$PROJECT_DIR$/.idea/modules/camera-network/camera-network.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/httpserver/httpserver.iml" filepath="$PROJECT_DIR$/.idea/modules/httpserver/httpserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/object-finder/object-finder.iml" filepath="$PROJECT_DIR$/.idea/modules/object-finder/object-finder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/object-recognizer/object-recognizer.iml" filepath="$PROJECT_DIR$/.idea/modules/object-recognizer/object-recognizer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sm-core.iml" filepath="$PROJECT_DIR$/.idea/modules/sm-core.iml" />
+    </modules>
+  </component>
+</project>

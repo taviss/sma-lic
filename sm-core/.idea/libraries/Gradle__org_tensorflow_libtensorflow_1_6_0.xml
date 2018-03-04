@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.tensorflow:libtensorflow:1.6.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.tensorflow/libtensorflow/1.6.0/b8bbfa51cdd047a5b2c6faa36a7022c6f9d8381b/libtensorflow-1.6.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.tensorflow/libtensorflow/1.6.0/6154d642466b06682661a993120e7a62c26dadd5/libtensorflow-1.6.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

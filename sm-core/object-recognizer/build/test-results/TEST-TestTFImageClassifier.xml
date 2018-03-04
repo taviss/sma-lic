@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="TestTFImageClassifier" tests="1" skipped="0" failures="0" errors="0" timestamp="2018-03-04T13:05:03" hostname="DESKTOP-26ER7VR" time="5.919">
+  <properties/>
+  <testcase name="testImg" classname="TestTFImageClassifier" time="5.919"/>
+  <system-out><![CDATA[BEST MATCH: golden retriever (93.79% likely)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
