@@ -35,13 +35,13 @@ public class UserController extends Controller {
     @Inject
     private UserDAO userDAO;
 
-    //@Security.Authenticated(Secured.class)
+    @Security.Authenticated(Secured.class)
     @Transactional
     public Result adminPanel() {
         return ok(index.render());
     }
 
-    //@Security.Authenticated(Secured.class)
+    @Security.Authenticated(Secured.class)
     @Transactional
     public Result createUser() {
         Form<User> form = formFactory.form(User.class).bindFromRequest();
@@ -65,7 +65,7 @@ public class UserController extends Controller {
         }
     }
 
-    //@Security.Authenticated(Secured.class)
+    @Security.Authenticated(Secured.class)
     @Transactional
     public Result createUserForm() {
         return ok(user.render());

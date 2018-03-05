@@ -9,6 +9,8 @@ GET     /logout                     controllers.UserController.logoutUser
 POST    /login/submit               controllers.UserController.tryLogin
 GET     /logged                     controllers.UserController.isLogged
 
+POST    /locate                     controllers.ObjectFinderController.findObject
+
 GET     /users/add                  controllers.UserController.createUserForm
 POST    /users                      controllers.UserController.createUser
 POST    /users/password/change      controllers.UserController.changeUserPassword

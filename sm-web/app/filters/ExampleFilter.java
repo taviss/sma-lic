@@ -7,27 +7,33 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.concurrent.Executor;
 
-/**
- * This is a simple filter that adds a header to all requests.
- */
-@Singleton
-public class ExampleFilter extends EssentialFilter {
+import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
+import javax.inject.Inject;
+import akka.stream.Materializer;
+import play.Logger;
+import play.mvc.*;
 
-    private final Executor exec;
+public class ExampleFilter extends Filter {
 
-    /**
-     * @param exec This class is needed to execute code asynchronously.
-     */
     @Inject
-    public ExampleFilter(Executor exec) {
-        this.exec = exec;
+    public ExampleFilter(Materializer mat) {
+        super(mat);
     }
 
     @Override
-    public EssentialAction apply(EssentialAction next) {
-        return EssentialAction.of(request ->
-            next.apply(request).map(result ->
-                 result.withHeader("X-ExampleFilter", "foo"), exec)
-        );
+    public CompletionStage<Result> apply(
+            Function<Http.RequestHeader, CompletionStage<Result>> nextFilter,
+            Http.RequestHeader requestHeader) {
+        long startTime = System.currentTimeMillis();
+        return nextFilter.apply(requestHeader).thenApply(result -> {
+            long endTime = System.currentTimeMillis();
+            long requestTime = endTime - startTime;
+
+            Logger.info("{} {} took {}ms and returned {}",
+                    requestHeader.method(), requestHeader.uri(), requestTime, result.status());
+
+            return result.withHeader("Request-Time", "" + requestTime);
+        });
     }
 }
