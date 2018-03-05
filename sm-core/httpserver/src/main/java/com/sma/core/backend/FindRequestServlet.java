@@ -19,8 +19,8 @@ public class FindRequestServlet extends HttpServlet {
 
     public FindRequestServlet() {
         //FIXME Demo
-        this.objectFinderService.addCamera(new ImageCamera("test", new File("D:\\Facultate\\LIC_SMA\\sm-core\\object-recognizer\\src\\main\\resources\\puppy_224.jpg")));
-        this.objectFinderService.bindObjectRecoginzer(new TensorflowImageClassifier("D:\\Facultate\\LIC_SMA\\sm-core\\object-recognizer\\src\\main\\resources"));
+        //this.objectFinderService.addCamera(new ImageCamera("test", new File("D:\\Facultate\\LIC_SMA\\sm-core\\object-recognizer\\src\\main\\resources\\puppy_224.jpg")));
+        //this.objectFinderService.bindObjectRecoginzer(new TensorflowImageClassifier("D:\\Facultate\\LIC_SMA\\sm-core\\object-recognizer\\src\\main\\resources"));
     }
 
     @Override

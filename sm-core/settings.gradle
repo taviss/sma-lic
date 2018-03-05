@@ -1,5 +1,5 @@
 rootProject.name = 'sm-core'
-include 'httpserver'
+//include 'httpserver'
 include 'camera'
 include 'object-recognizer'
 include 'camera-network'

@@ -2,6 +2,7 @@ package com.sma.object.finder.tf;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,17 +22,19 @@ import org.tensorflow.types.UInt8;
 
 /** Sample use of the TensorFlow Java API to label images using a pre-trained model. */
 public class TensorflowImageClassifier implements ObjectRecognizer {
-    private String modelDir;
+    private URI tfModel;
+    private URI tfLabels;
 
-    public TensorflowImageClassifier(String modelDir) {
-        this.modelDir = modelDir;
+    public TensorflowImageClassifier(URI tfModel, URI tfLabels) {
+        this.tfModel = tfModel;
+        this.tfLabels = tfLabels;
     }
 
     public List<String> identifyImage(byte[] imageBytes) {
 
-        byte[] graphDef = readAllBytesOrExit(Paths.get(modelDir, "tensorflow_inception_graph.pb"));
+        byte[] graphDef = readAllBytesOrExit(Paths.get(tfModel));
         List<String> labels =
-                readAllLinesOrExit(Paths.get(modelDir, "imagenet_comp_graph_label_strings.txt"));
+                readAllLinesOrExit(Paths.get(tfLabels));
         //byte[] imageBytes = readAllBytesOrExit(Paths.get(imageFile));
 
         try (Tensor<Float> image = constructAndExecuteGraphToNormalizeImage(imageBytes)) {

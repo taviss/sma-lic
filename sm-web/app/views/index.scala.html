@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="project_upload">
+<head>
+    <title>Index</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://code.angularjs.org/1.5.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.js"></script>
+    <script src="@routes.Assets.versioned("javascripts/script.js")"></script>
+    <script src="@routes.Assets.versioned("javascripts/login.js")"></script>
+    <link rel="stylesheet" type="text/css" href='@routes.Assets.versioned("stylesheets/style.css")'>
+</head>
+<body ng-controller="mainController">
+    <div id="header">
+            <!-- <a href="/"><img id="logo" src='@routes.Assets.versioned("images/sv.png")'/></a> -->
+    </div>
+    <div id="menu">
+        <ul>
+            <li><a href="/">Index</a></li>
+            <li><a href="/projects/upload">Upload</a></li>
+            <li><a href="/projects/report">Report</a></li>
+            <li><a href="/acp" ng-show="loggedIn">ACP</a></li>
+            <li id="logout-button" ng-show="loggedIn"><a href="/acp/logout">Logout</a></li>
+        </ul>
+    </div>
+    <div id="wrapper">
+        <div id="main">
+
+        </div>
+        <div id="footer">
+            <p>Footer</p>
+        </div>
+    </div>
+    <a id="acp-login" ng-show="!loggedIn" href="/acp/login">ACP Login</a>
+</body>
+</html>
