@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.sma.smartfinder.SettingsActivity;
+import com.sma.smartfinder.http.utils.MultipartUtility;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -59,17 +60,6 @@ public class ObjectFinderService extends IntentService {
         }
 
         try {
-            URL url = new URL("http://" + camerasAddress);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-
-            connection.connect();
-
-            OutputStream outputStream = connection.getOutputStream();
             Bitmap bmp = null;
             String filename = intent.getStringExtra("locate_image");
             try {
@@ -80,10 +70,8 @@ public class ObjectFinderService extends IntentService {
                 e.printStackTrace();
             }
 
-            bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-            outputStream.close();
-
-            waitForResponse(connection.getInputStream());
+            String response = MultipartUtility.postImage(camerasAddress, bmp);
+            handleResponse(response);
 
         } catch (IOException e) {
             Log.i(TAG, e.getMessage());
@@ -101,8 +89,8 @@ public class ObjectFinderService extends IntentService {
 
     }
 
-    private void waitForResponse(InputStream inputStream) {
-        Scanner scanner = new Scanner(inputStream);
+    private void handleResponse(String response) {
+        Scanner scanner = new Scanner(response);
         //TODO rework + test with the actual server
         String line;
         while(scanner.hasNext()) {

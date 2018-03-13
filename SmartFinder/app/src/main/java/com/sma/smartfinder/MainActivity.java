@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.sma.smartfinder.http.utils.MultipartUtility;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,17 +70,6 @@ public class MainActivity extends BaseActivity {
                         return;
                     }
 
-                    URL url = new URL("http://" + camerasAddress);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setReadTimeout(10000);
-                    connection.setConnectTimeout(15000);
-                    connection.setRequestMethod("POST");
-                    connection.setDoInput(true);
-                    connection.setDoOutput(true);
-
-                    connection.connect();
-
-                    OutputStream outputStream = connection.getOutputStream();
                     Bitmap bmp = null;
                     //String filename = intent.getStringExtra("locate_image");
                     try {
@@ -89,10 +80,7 @@ public class MainActivity extends BaseActivity {
                         e.printStackTrace();
                     }
 
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-                    outputStream.close();
-
-                    waitForResponse(connection.getInputStream());
+                    String response = MultipartUtility.postImage(camerasAddress, bmp);
 
                 } catch (IOException e) {
                     //Log.i(TAG, e.getMessage());
@@ -113,8 +101,8 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void waitForResponse(InputStream inputStream) {
-        Scanner scanner = new Scanner(inputStream);
+    private void handleResponse(String response) {
+        Scanner scanner = new Scanner(response);
         //TODO rework + test with the actual server
         String line;
         while(scanner.hasNext()) {

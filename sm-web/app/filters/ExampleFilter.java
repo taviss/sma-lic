@@ -30,8 +30,8 @@ public class ExampleFilter extends Filter {
             long endTime = System.currentTimeMillis();
             long requestTime = endTime - startTime;
 
-            Logger.info("{} {} took {}ms and returned {}",
-                    requestHeader.method(), requestHeader.uri(), requestTime, result.status());
+            Logger.info("{} {} took {}ms and returned {} - {}",
+                    requestHeader.method(), requestHeader.uri(), requestTime, result.status(), requestHeader.host());
 
             return result.withHeader("Request-Time", "" + requestTime);
         });
