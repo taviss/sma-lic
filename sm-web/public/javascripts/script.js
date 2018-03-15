@@ -1,11 +1,6 @@
-var app = angular.module('project_upload', ['ngAnimate', 'ngRoute']);
+var app = angular.module('sm-web', ['ngAnimate', 'ngRoute']);
 
 app.config(function ($routeProvider, $locationProvider) {
-        // configure the routing rules here
-        $routeProvider.when('/projects/view/:id', {
-            controller: 'projectViewController'
-        });
-
         // enable HTML5mode to disable hashbang urls
         $locationProvider.html5Mode(true);
 });

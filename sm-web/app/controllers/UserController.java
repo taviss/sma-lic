@@ -115,7 +115,7 @@ public class UserController extends Controller {
         String remote = request().remoteAddress();
         Logger.info("User logged in: " + form.get().userName + " (" + remote + ")");
         flash("success", "You've been logged in");
-        return redirect("/acp");
+        return redirect("/");
     }
 
     @Transactional

@@ -53,7 +53,7 @@ app.controller('loginController', function ($scope, UserService) {
     $scope.isAuthenticated = function() {
        UserService.isAuthenticated(function (success) {
             if(success) {
-                window.location = '/acp';
+                window.location = '/';
             }
        });
     }
@@ -64,7 +64,7 @@ app.controller('loginController', function ($scope, UserService) {
         UserService.loginUser($scope.user)
             .success(function(){
                 username = $scope.user.name;
-                window.location = "/acp";
+                window.location = "/";
             })
 
             .error(function(error, status){

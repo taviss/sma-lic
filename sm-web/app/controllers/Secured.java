@@ -4,6 +4,8 @@ package controllers;
  * Created by octavian.salcianu on 7/18/2016.
  */
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import play.*;
 import play.mvc.*;
 import play.mvc.Http.*;
@@ -24,7 +26,14 @@ public class Secured extends Security.Authenticator {
         if (lastActivity != null && !lastActivity.equals("")) {
             long previousT = Long.valueOf(lastActivity);
             long currentT = new Date().getTime();
-            long timeout = Long.valueOf(Configuration.root().getString("sessionTimeout")) * 1000 * 60;
+            Config config = ConfigFactory.load();
+            long configTimeout = 1L;
+            try {
+                configTimeout = Long.valueOf(config.getString("sessionTimeout"));
+            } catch (NumberFormatException e) {
+                //FIXME
+            }
+            long timeout =  configTimeout * 1000 * 60;
             if ((currentT - previousT) > timeout) {
                 //Logger.warn("Session expired: " + ctx.session().get("lastActivity"));
                 ctx.session().clear();
@@ -42,6 +51,6 @@ public class Secured extends Security.Authenticator {
 
     @Override
     public Result onUnauthorized(Context ctx) {
-        return redirect("/acp/login");
+        return redirect("/login");
     }
 }

@@ -1,0 +1,55 @@
+@import play.api.Play.current
+
+<!DOCTYPE html>
+<html ng-app="sm-web">
+<head>
+    <title>Add camera</title>
+    <script src="https://code.angularjs.org/1.5.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.js"></script>
+    <script src='@routes.Assets.versioned("javascripts/script.js")'></script>
+    <script src='@routes.Assets.versioned("javascripts/camera.js")'></script>
+    <link rel="stylesheet" type="text/css" href='@routes.Assets.versioned("stylesheets/style.css")'>
+</head>
+<body ng-controller="cameraController">
+<div id="header">
+    <!-- <a href="/"><img id="logo" src='@routes.Assets.versioned("images/sv.png")'/></a> -->
+</div>
+<div id="menu">
+    <ul>
+        <li><a href="/">Index</a></li>
+        <li><a href="/projects/upload">Upload</a></li>
+        <li><a href="/projects/report">Report</a></li>
+    </ul>
+</div>
+<div id="wrapper">
+    <div id="main">
+        <h2>Add camera</h2>
+        <hr />
+        <form name="camera-form">
+            Address: <br />
+            <input type="text" ng-class="(errors.address == null) ? 'valid' : 'invalid'" placeholder="" ng-model="camera.address" required />
+            <div class="error" ng-repeat="error in errors.address">
+                {{error}}
+            </div>
+            <br />
+            User: <br />
+            <input type="text" ng-class="(errors.user == null) ? 'valid' : 'invalid'" placeholder="" ng-model="camera.user" required />
+            <div class="error" ng-repeat="error in errors.user">
+                {{error}}
+            </div>
+            <br />
+            Password: <br />
+            <input type="password" ng-class="(errors.password == null) ? 'valid' : 'invalid'" placeholder="" ng-model="camera.password" required />
+            <div class="error" ng-repeat="error in errors.password">
+                {{error}}
+            </div>
+            <br />
+            <br />
+            <button ng-click = "addCamera()">Add</button>
+        </form>
+    </div>
+    <div id="footer">Footer</div>
+</div>
+</body>
+</html>
