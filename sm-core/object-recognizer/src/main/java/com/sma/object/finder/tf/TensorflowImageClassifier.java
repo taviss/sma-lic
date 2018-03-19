@@ -35,6 +35,9 @@ public class TensorflowImageClassifier implements ObjectRecognizer {
         byte[] graphDef = readAllBytesOrExit(Paths.get(tfModel));
         List<String> labels =
                 readAllLinesOrExit(Paths.get(tfLabels));
+        
+        if(graphDef == null || labels == null)
+            return new ArrayList<>();
         //byte[] imageBytes = readAllBytesOrExit(Paths.get(imageFile));
 
         try (Tensor<Float> image = constructAndExecuteGraphToNormalizeImage(imageBytes)) {
@@ -115,8 +118,8 @@ public class TensorflowImageClassifier implements ObjectRecognizer {
         try {
             return Files.readAllBytes(path);
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.println("Failed to read [" + path + "]: " + e.getMessage());
-            System.exit(1);
         }
         return null;
     }
@@ -125,8 +128,8 @@ public class TensorflowImageClassifier implements ObjectRecognizer {
         try {
             return Files.readAllLines(path, Charset.forName("UTF-8"));
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.println("Failed to read [" + path + "]: " + e.getMessage());
-            System.exit(0);
         }
         return null;
     }
