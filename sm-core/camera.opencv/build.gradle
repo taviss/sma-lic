@@ -1,0 +1,17 @@
+group 'com.sma'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile project(":camera")
+    // https://mvnrepository.com/artifact/nu.pattern/opencv
+    compile group: 'nu.pattern', name: 'opencv', version: '2.4.9-4'
+}

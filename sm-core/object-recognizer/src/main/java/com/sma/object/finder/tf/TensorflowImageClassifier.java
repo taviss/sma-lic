@@ -30,7 +30,7 @@ public class TensorflowImageClassifier implements ObjectRecognizer {
         this.tfLabels = tfLabels;
     }
 
-    public List<String> identifyImage(byte[] imageBytes) {
+    public List<Recognition> identifyImage(byte[] imageBytes) {
 
         byte[] graphDef = readAllBytesOrExit(Paths.get(tfModel));
         List<String> labels =
@@ -47,7 +47,11 @@ public class TensorflowImageClassifier implements ObjectRecognizer {
                     String.format("BEST MATCH: %s (%.2f%% likely)",
                             labels.get(bestLabelIdx),
                             labelProbabilities[bestLabelIdx] * 100f));
-            return Arrays.asList(labels.get(bestLabelIdx));
+            
+            Recognition recognition = new Recognition(Integer.toString(bestLabelIdx), labels.get(bestLabelIdx), labelProbabilities[bestLabelIdx]);
+            
+            
+            return Arrays.asList();
         }
     }
 

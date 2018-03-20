@@ -23,7 +23,7 @@ public class ImageCamera implements Camera {
 
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "bmp", byteArrayOutputStream);
+            ImageIO.write(image, "jpeg", byteArrayOutputStream);
             this.imageBytes = byteArrayOutputStream.toByteArray();
         } catch(IOException e) {
             throw new RuntimeException("Could not convert BMP to byte array");

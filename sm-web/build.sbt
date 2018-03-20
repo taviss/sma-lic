@@ -4,11 +4,12 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava, LauncherJarPlugin)
 
-val folderName =
-  if (System.getProperty("os.name").startsWith("Windows")) "windows" else "linux"
+//val folderName =
+//  if (System.getProperty("os.name").startsWith("Windows")) "windows" else "linux"
 
-val libPath = Seq("D:/study/lic/sma-lic/tf", s"lib/native/$folderName").mkString(java.io.File.pathSeparator)
-javaOptions in run += s"-Djava.library.path=$libPath"
+//val libPath = Seq("D:/study/lic/sma-lic/tf", s"lib/native/$folderName").mkString(java.io.File.pathSeparator)
+//javaOptions in run += s"-Djava.library.path=$libPath"
+//javaOptions in run += s"-Dorg.tensorflow.NativeLibrary.DEBUG=1"
 
 scalaVersion := "2.12.4"
 
@@ -37,6 +38,8 @@ libraryDependencies += evolutions
 //libraryDependencies += filters
 //libraryDependencies += "org.apache.commons" % "commons-io" % "1.3.2"
 libraryDependencies += "org.tensorflow" % "tensorflow" % "1.6.0"
+libraryDependencies += "org.red5" % "red5-client" % "1.0.10-M5"
+
 
 
 // Make verbose tests

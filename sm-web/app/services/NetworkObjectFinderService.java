@@ -4,12 +4,15 @@ import com.sma.core.camera.api.Camera;
 import com.sma.core.camera.st.impl.ImageCamera;
 import com.sma.core.object.finder.service.ObjectFinderService;
 import com.sma.object.finder.api.ObjectRecognizer;
+import com.sma.object.finder.tf.TensorflowImageClassifier;
 import com.typesafe.config.Config;
 import models.CameraAddress;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -30,20 +33,20 @@ public class NetworkObjectFinderService {
     }
     
     //TODO Async
-    public String findObject(Long userId, List<Camera> cameras, byte[] imageBytes) {
+    public List<byte[]> findObject(Long userId, List<Camera> cameras, byte[] imageBytes) {
         synchronized (cache) {
             ObjectFinderService objectFinderService = cache.get(userId);
             if(objectFinderService == null) {
                 objectFinderService = new ObjectFinderService();
                 objectFinderService.bindObjectRecoginzer(this.objectRecognizer);
+                objectFinderService.bindImageClassifier(this.objectRecognizer);
                 for(Camera camera : cameras) {
                     objectFinderService.addCamera(camera);
                 }
                 cache.put(userId, objectFinderService);
             }
             
-            objectFinderService.findObject(imageBytes);
+            return objectFinderService.findObject(imageBytes);
         }
-        return "";
     }
 }

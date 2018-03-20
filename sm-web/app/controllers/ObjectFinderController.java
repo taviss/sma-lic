@@ -2,21 +2,18 @@ package controllers;
 
 import com.sma.core.camera.api.Camera;
 import com.sma.core.camera.st.impl.ImageCamera;
-import com.sma.core.object.finder.service.ObjectFinderService;
-import com.sma.object.finder.api.ObjectRecognizer;
-import com.sma.object.finder.tf.TensorflowImageClassifier;
 import models.User;
 import models.dao.UserDAO;
 import play.mvc.*;
 import services.ImageUploadService;
 import services.NetworkObjectFinderService;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,12 +48,23 @@ public class ObjectFinderController extends Controller {
                 //TODO Retrieve cameras from user
                 //URI fakeCameraImage = ObjectRecognizer.class.getResource("puppy_224.jpg").toURI();
                 cameras.add(new ImageCamera("CAM1", new File("D:\\study\\lic\\sma-lic\\sm-core\\object-recognizer\\src\\main\\resources\\puppy_224.jpg")));
+                cameras.add(new ImageCamera("CAM2", new File("D:\\study\\lic\\sma-lic\\sm-core\\object-recognizer\\src\\main\\resources\\puppy_224_mod.jpg")));
                 
                 User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
 
-                byte[] imageBytes = Files.readAllBytes(file.toPath());
+                BufferedImage bufferedImage = ImageIO.read(file);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ImageIO.write(bufferedImage, "jpeg", byteArrayOutputStream);
+                byte[] imageBytes = byteArrayOutputStream.toByteArray();
+                
+                List<byte[]> recognizedImages = this.networkObjectFinderService.findObject(1L, cameras, imageBytes);
 
-                return ok(this.networkObjectFinderService.findObject(1L, cameras, imageBytes));
+                if(recognizedImages != null && recognizedImages.size() > 0) {
+                    System.out.println("Total recognitions: " + recognizedImages.size());
+                    return ok(recognizedImages.get(0)).as("image/jpg");
+                } else {
+                    return ok("Object not found!");
+                }
             } catch (IOException e) {
                 return ok("No object found!");
             }

@@ -1,12 +1,15 @@
 import com.google.inject.AbstractModule;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
 
 import com.google.inject.Inject;
 import com.sma.object.finder.api.ObjectRecognizer;
 import com.sma.object.finder.tf.TensorflowImageClassifier;
+import com.sma.object.finder.tf.TensorflowMultibox;
+import com.sma.object.finder.tf.TensorflowObjectDetectionAPI;
 import com.typesafe.config.Config;
 import play.Configuration;
 import play.Environment;
@@ -23,6 +26,12 @@ import services.*;
  * configuration file.
  */
 public class Module extends AbstractModule {
+    private static final int MB_INPUT_SIZE = 224;
+    private static final int MB_IMAGE_MEAN = 128;
+    private static final float MB_IMAGE_STD = 128;
+    private static final String MB_INPUT_NAME = "ResizeBilinear";
+    private static final String MB_OUTPUT_LOCATIONS_NAME = "output_locations/Reshape";
+    private static final String MB_OUTPUT_SCORES_NAME = "output_scores/Reshape";
 
     private Environment environment;
     private Configuration configuration;
@@ -43,10 +52,17 @@ public class Module extends AbstractModule {
         bind(Counter.class).to(AtomicCounter.class);
         bind(ImageUploadService.class).asEagerSingleton();
 
-        URI tfModel = new File(configuration.getString("tfModelPath")).toURI();
-        URI tfLabels = new File(configuration.getString("tfLabelsPath")).toURI();
-        TensorflowImageClassifier tensorflowImageClassifier = new TensorflowImageClassifier(tfModel, tfLabels);
-        bind(ObjectRecognizer.class).toInstance(tensorflowImageClassifier);
+        try {
+            ObjectRecognizer tensorflowMultibox = TensorflowObjectDetectionAPI.create(
+                    configuration.getString("tfMultiboxModelPath"),
+                    configuration.getString("tfMultiboxLocationPriors"),
+                    224
+            );
+            bind(ObjectRecognizer.class).toInstance(tensorflowMultibox);
+        } catch(IOException e) {
+            //FIXME
+        }
+        
         
         bind(NetworkObjectFinderService.class).asEagerSingleton();
     }
