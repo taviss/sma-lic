@@ -67,7 +67,7 @@ public class ObjectFinderService {
         return globalRecognitions;
     }
     
-    public class ConfidenceComparator implements Comparator<Recognition> {
+    public static final class ConfidenceComparator implements Comparator<Recognition> {
 
         @Override
         public int compare(Recognition o1, Recognition o2) {

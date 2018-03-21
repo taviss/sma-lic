@@ -2,8 +2,12 @@ package controllers;
 
 import com.sma.core.camera.api.Camera;
 import com.sma.core.camera.st.impl.ImageCamera;
+import com.sma.core.object.finder.service.ObjectFinderService;
+import com.sma.object.finder.api.ObjectRecognizer;
+import com.sma.object.finder.tf.Recognition;
 import models.User;
 import models.dao.UserDAO;
+import play.libs.Json;
 import play.mvc.*;
 import services.ImageUploadService;
 import services.NetworkObjectFinderService;
@@ -16,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ObjectFinderController extends Controller {
     
@@ -23,13 +28,16 @@ public class ObjectFinderController extends Controller {
     
     private final NetworkObjectFinderService networkObjectFinderService;
     
+    private final ObjectRecognizer objectRecognizer;
+    
     @Inject
     private UserDAO userDAO;
     
     @Inject
-    public ObjectFinderController(ImageUploadService imageUploadService, NetworkObjectFinderService networkObjectFinderService) {
+    public ObjectFinderController(ImageUploadService imageUploadService, NetworkObjectFinderService networkObjectFinderService, ObjectRecognizer objectRecognizer) {
         this.imageUploadService = imageUploadService;
         this.networkObjectFinderService = networkObjectFinderService;
+        this.objectRecognizer = objectRecognizer;
     }
     
     //@Security.Authenticated(Secured.class)
@@ -65,6 +73,37 @@ public class ObjectFinderController extends Controller {
                 } else {
                     return ok("Object not found!");
                 }
+            } catch (IOException e) {
+                return ok("No object found!");
+            }
+        } else {
+            flash("error", "Missing file");
+            return badRequest();
+        }
+    }
+    
+    @Security.Authenticated(Secured.class)
+    public Result recognizeObject() {
+        Http.MultipartFormData<File> body = request().body().asMultipartFormData();
+        Http.MultipartFormData.FilePart<File> picture = body.getFile("object");
+        if (picture != null) {
+            String fileName = picture.getFilename();
+            String contentType = picture.getContentType();
+            File file = picture.getFile();
+            
+            try {
+
+                BufferedImage bufferedImage = ImageIO.read(file);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ImageIO.write(bufferedImage, "jpeg", byteArrayOutputStream);
+                byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+                List<Recognition> recognitions = this.objectRecognizer.identifyImage(imageBytes);
+                recognitions = recognitions.stream().filter(p -> p.getConfidence() > 0.7f).collect(Collectors.toList());
+                recognitions.sort(new ObjectFinderService.ConfidenceComparator().reversed());
+                
+                
+                return ok(Json.toJson(recognitions));
             } catch (IOException e) {
                 return ok("No object found!");
             }
