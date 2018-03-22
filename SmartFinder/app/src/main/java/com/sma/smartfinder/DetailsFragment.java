@@ -61,7 +61,7 @@ public class DetailsFragment extends Fragment {
 
                     String filename = "img_locate.png";
                     FileOutputStream stream = getActivity().openFileOutput(filename, Context.MODE_PRIVATE);
-                    currentImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    currentImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
                     stream.close();
                     currentImage.recycle();

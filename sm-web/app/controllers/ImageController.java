@@ -23,6 +23,9 @@ public class ImageController extends Controller {
     
     @Inject
     private UserDAO userDAO;
+
+    @Inject
+    private ImageDAO imageDAO;
     
     private final ImageUploadService imageUploadService;
     
@@ -31,7 +34,7 @@ public class ImageController extends Controller {
         this.imageUploadService = imageUploadService;
     }
     
-    @Security.Authenticated
+    @Security.Authenticated(Secured.class)
     @Transactional
     public Result uploadImage() {
         Form<Image> imageForm = formFactory.form(Image.class).bindFromRequest();
@@ -49,8 +52,12 @@ public class ImageController extends Controller {
             User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
             
             boolean uploadSuccess = imageUploadService.uploadImage(uploadedImage, imageFile.getFilename(), imageFile.getContentType(), imageFile.getFile(), foundUser);
-
+            
             if(uploadSuccess) {
+                
+                uploadedImage.setOwner(foundUser);
+                imageDAO.create(uploadedImage);
+                
                 return ok("File uploaded");
             } else {
                 return badRequest("Error while uploading");

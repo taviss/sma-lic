@@ -26,16 +26,6 @@
             android:layout_height="75dp"
             android:padding="2dp" />
 
-        <TextView
-            android:id="@+id/textViewResult"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:fadeScrollbars="false"
-            android:maxLines="15"
-            android:scrollbars="vertical"
-            android:gravity="center"
-            android:textColor="@android:color/black" />
-
     </LinearLayout>
 
 

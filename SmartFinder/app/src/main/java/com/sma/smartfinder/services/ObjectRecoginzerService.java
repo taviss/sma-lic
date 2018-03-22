@@ -15,22 +15,26 @@ import android.widget.Toast;
 import com.sma.smartfinder.SettingsActivity;
 import com.sma.smartfinder.http.utils.HTTPUtility;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * Created by octavian.salcianu on 1/11/2018.
+ * Created by octavian.salcianu on 3/22/2018.
  */
 
-public class ObjectFinderService extends IntentService {
-    private static final String TAG = ObjectFinderService.class.getSimpleName();
+public class ObjectRecoginzerService  extends IntentService {
 
-    public ObjectFinderService() {
+    private static final String TAG = ObjectRecoginzerService.class.getSimpleName();
+
+    public ObjectRecoginzerService() {
         super(TAG);
     }
 
@@ -71,13 +75,13 @@ public class ObjectFinderService extends IntentService {
 
             Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
             if(logged.get()) {
-                Future<String> response = HTTPUtility.postImage(camerasAddress + "/locate", bmp);
-                handleResponse(response.get());
+                Future<String> response = HTTPUtility.postImage(camerasAddress + "/recognize", bmp);
+                handleResponse(response.get(), filename);
             } else {
-                throw new IllegalStateException("Cannot log in!");
+                handleResponse(null, null);
             }
 
-        } catch (IllegalStateException|IOException|JSONException|InterruptedException|ExecutionException e) {
+        } catch (JSONException|IOException|InterruptedException|ExecutionException e) {
             Log.i(TAG, e.getMessage());
             startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             Handler handler = new Handler(Looper.getMainLooper());
@@ -85,26 +89,34 @@ public class ObjectFinderService extends IntentService {
 
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(), "Could not connect to camera server!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Could not send request to server!", Toast.LENGTH_SHORT).show();
                 }
             });
 
         }
-
     }
 
-    private void handleResponse(String response) {
-        Scanner scanner = new Scanner(response);
-        //TODO rework + test with the actual server
-        String line;
-        while(scanner.hasNext()) {
-            line = scanner.nextLine();
-            if(line.contains("imageName")) {
+    private void handleResponse(String response, String image) {
+        if(response != null) {
+            try {
+                JSONArray jsonArray = new JSONArray(response);
 
-                sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_FOUND").putExtra("imageName", line));
-                return;
+                if (jsonArray.length() != 0) {
+                    //TODO Use Recognition class from sm-core!
+                    ArrayList<String> recognitions = new ArrayList<>();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        recognitions.add((String) jsonObject.get("title"));
+                    }
+
+                    sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_RECOGNIZED").putExtra("image", image).putStringArrayListExtra("recognitions", recognitions));
+                    return;
+                }
+            } catch (JSONException e) {
+                Log.i(TAG, e.getMessage());
             }
         }
-        sendBroadcast(new Intent("com.sma.smartfinder.action.NO_OBJECT_FOUND"));
+        sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_NOT_RECOGNIZED"));
     }
 }

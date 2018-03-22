@@ -114,8 +114,7 @@ public class UserController extends Controller {
         session("user", form.get().userName);
         String remote = request().remoteAddress();
         Logger.info("User logged in: " + form.get().userName + " (" + remote + ")");
-        flash("success", "You've been logged in");
-        return redirect("/");
+        return ok();
     }
 
     @Transactional
@@ -123,8 +122,7 @@ public class UserController extends Controller {
         String remote = request().remoteAddress();
         Logger.info("User logged out: " + session().get("user") + " (" + remote + ")");
         session().clear();
-        flash("success", "You've been logged out");
-        return redirect("/");
+        return ok();
     }
 
     @Security.Authenticated(Secured.class)
@@ -142,7 +140,7 @@ public class UserController extends Controller {
         userDAO.update(foundUser);
         String remote = request().remoteAddress();
         Logger.info("Changed password: " + foundUser.getUserName() + " (" + remote + ")");
-        return redirect("/");
+        return ok();
     }
 
     @Transactional

@@ -12,10 +12,10 @@ import com.sma.smartfinder.ObjectRecognizedActivity;
 import com.sma.smartfinder.SmartFinderApplication;
 
 /**
- * Created by octavian.salcianu on 1/11/2018.
+ * Created by octavian.salcianu on 3/22/2018.
  */
 
-public class ObjectRecognitionReceiver extends BroadcastReceiver {
+public class ObjectFindReceiver extends BroadcastReceiver {
     private static final int NOTIFICATION_ID = 42;
 
     @Override

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sma.smartfinder.ObjectRecognizedActivity">
+
+    <ListView
+        android:id="@+id/list_view_recognitions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/list_item_object_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignBaseline="@id/list_item_object_name"
+        android:layout_alignBottom="@id/list_item_object_name"
+        android:layout_below="@+id/list_item_object_name"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+</RelativeLayout>

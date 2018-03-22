@@ -29,15 +29,17 @@
         <activity android:name="com.sma.smartfinder.FindObjectActivity" />
 
         <service android:name="com.sma.smartfinder.services.ObjectFinderService"></service>
+        <service android:name="com.sma.smartfinder.services.ObjectRecoginzerService"></service>
+
 
         <receiver android:name="com.sma.smartfinder.receivers.ObjectRecognitionReceiver">
             <intent-filter>
-                <action android:name="com.sma.smartfinder.action.OBJECT_FOUND" />
-                <action android:name="com.sma.smartfinder.action.NO_OBJECT_FOUND" />
+                <action android:name="com.sma.smartfinder.action.OBJECT_RECOGNIZED" />
+                <action android:name="com.sma.smartfinder.action.OBJECT_NOT_RECOGNIZED" />
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.sma.smartfinder.ObjectFoundActivity"></activity>
+        <activity android:name="com.sma.smartfinder.ObjectRecognizedActivity"></activity>
         <activity android:name="com.sma.smartfinder.SettingsActivity"></activity>
         <activity android:name="com.sma.smartfinder.DetailsActivity"></activity>
 

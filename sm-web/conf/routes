@@ -21,5 +21,7 @@ POST    /cameras                    controllers.CameraAddressController.createCa
 DELETE  /cameras/:id                controllers.CameraAddressController.deleteCamera(id : Long)
 GET     /cameras                    controllers.CameraAddressController.createCameraForm
 
+POST    /images                     controllers.ImageController.uploadImage
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
