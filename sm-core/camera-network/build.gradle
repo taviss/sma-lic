@@ -1,5 +1,5 @@
 group 'com.sma'
-version '1.0-SNAPSHOT'
+version '2.0-SNAPSHOT'
 
 apply plugin: 'java'
 
@@ -10,5 +10,5 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile project(":camera")
-    compile project (":object-recognizer")
+    compile project (":object-recognizer.api")
 }

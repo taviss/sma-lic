@@ -1,5 +1,6 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import forms.LoginForm;
 import forms.PasswordChangeForm;
 import models.User;
@@ -9,6 +10,7 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.*;
 import views.html.index;
 import views.html.login;
@@ -19,7 +21,7 @@ import javax.inject.Inject;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.UUID;
+import java.util.*;
 
 import static utils.PasswordHashing.hashPassword;
 import static utils.PasswordHashing.validatePassword;
@@ -40,32 +42,38 @@ public class UserController extends Controller {
     public Result adminPanel() {
         return ok(index.render());
     }
-
-    @Security.Authenticated(Secured.class)
+    
     @Transactional
     public Result createUser() {
         Form<User> form = formFactory.form(User.class).bindFromRequest();
 
         if (form.hasErrors()) {
-            return badRequest("Invalid form");
+            return badRequest(form.errorsAsJson());
         }
+        
+        User foundUser = userDAO.getUserByName(form.get().getUserName());
 
-        User foundUser = userDAO.getUserByMail(form.get().getUserMail());
-        User foundMail = userDAO.getUserByName(form.get().getUserName());
-
-        if (foundUser != null || foundMail != null) {
-            return badRequest("Username or email in use");
+        if (foundUser != null) {
+            Map<String, List<String>> allMessages = new HashMap<>();
+            allMessages.put("userName", Arrays.asList("Username in use!"));
+            return badRequest(Json.toJson(allMessages));
         } else {
-            User createdUser = form.get();
-            createdUser.setUserPass(hashPassword(createdUser.getUserPass().toCharArray()));
-            createdUser.setUserToken(UUID.randomUUID().toString());
-            createdUser.setUserActive(true);
-            userDAO.create(createdUser);
-            return ok("Success");
+            User foundMail = userDAO.getUserByMail(form.get().getUserMail());
+            if(foundMail != null) {
+                Map<String, List<String>> allMessages = new HashMap<>();
+                allMessages.put("userMail", Arrays.asList("Email in use!"));
+                return badRequest(Json.toJson(allMessages));
+            } else {
+                User createdUser = form.get();
+                createdUser.setUserPass(hashPassword(createdUser.getUserPass().toCharArray()));
+                createdUser.setUserToken(UUID.randomUUID().toString());
+                createdUser.setUserActive(true);
+                userDAO.create(createdUser);
+                return ok("Success");
+            }
         }
     }
-
-    @Security.Authenticated(Secured.class)
+    
     @Transactional
     public Result createUserForm() {
         return ok(user.render());
@@ -117,6 +125,7 @@ public class UserController extends Controller {
         return ok();
     }
 
+    @Security.Authenticated(Secured.class)
     @Transactional
     public Result logoutUser() {
         String remote = request().remoteAddress();

@@ -8,7 +8,8 @@ app.service("CameraService", function ($http) {
             data: {
                 "address": camera.address,
                 "user": camera.user,
-                "password": camera.password
+                "password": camera.password,
+                "cameraType": camera.type
             }
          });
     }
@@ -22,7 +23,10 @@ app.controller('cameraController', function ($scope, CameraService) {
     $scope.camera.address = null;
     $scope.camera.user = null;
     $scope.camera.password = null;
+    $scope.camera.type = null;
     $scope.errors = {};
+    
+    $scope.cameraTypes = ["RTMP", "OPENCV", "STATIC"];
 
     $scope.addCamera = function() {
         CameraService.addCamera($scope.camera)

@@ -2,15 +2,19 @@ package controllers;
 
 import com.sma.core.camera.api.Camera;
 import com.sma.core.camera.st.impl.ImageCamera;
-import com.sma.core.object.finder.service.ObjectFinderService;
-import com.sma.object.finder.api.ObjectRecognizer;
-import com.sma.object.finder.tf.Recognition;
+import com.sma.core.object.finder.service.api.ObjectFinderService;
+import com.sma.core.object.finder.service.impl.ObjectFinderServiceImpl;
+import com.sma.object.recognizer.api.ObjectRecognizer;
+import com.sma.object.recognizer.api.Recognition;
+import models.CameraAddress;
 import models.User;
+import models.dao.CameraAddressDAO;
 import models.dao.UserDAO;
 import play.libs.Json;
 import play.mvc.*;
 import services.ImageUploadService;
 import services.NetworkObjectFinderService;
+import utils.CameraFactory;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -34,13 +38,16 @@ public class ObjectFinderController extends Controller {
     private UserDAO userDAO;
     
     @Inject
+    private CameraAddressDAO cameraAddressDAO;
+    
+    @Inject
     public ObjectFinderController(ImageUploadService imageUploadService, NetworkObjectFinderService networkObjectFinderService, ObjectRecognizer objectRecognizer) {
         this.imageUploadService = imageUploadService;
         this.networkObjectFinderService = networkObjectFinderService;
         this.objectRecognizer = objectRecognizer;
     }
     
-    //@Security.Authenticated(Secured.class)
+    @Security.Authenticated(Secured.class)
     public Result findObject() {
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> picture = body.getFile("object");
@@ -55,10 +62,15 @@ public class ObjectFinderController extends Controller {
                 //TODO Demo only
                 //TODO Retrieve cameras from user
                 //URI fakeCameraImage = ObjectRecognizer.class.getResource("puppy_224.jpg").toURI();
-                cameras.add(new ImageCamera("CAM1", new File("D:\\study\\lic\\sma-lic\\sm-core\\object-recognizer\\src\\main\\resources\\puppy_224.jpg")));
-                cameras.add(new ImageCamera("CAM2", new File("D:\\study\\lic\\sma-lic\\sm-core\\object-recognizer\\src\\main\\resources\\puppy_224_mod.jpg")));
+                //cameras.add(new ImageCamera("CAM1", new File("D:\\study\\lic\\sma-lic\\sm-core\\object-recognizer\\src\\main\\resources\\puppies_224.jpg")));
+                //cameras.add(new ImageCamera("CAM2", new File("D:\\study\\lic\\sma-lic\\sm-core\\object-recognizer\\src\\main\\resources\\puppy_224.jpg")));
                 
                 User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
+                
+                for(CameraAddress cameraAddress : foundUser.getCameraAddresses()) {
+                    cameras.add(CameraFactory.createCamera(cameraAddress));
+                }
+                
 
                 BufferedImage bufferedImage = ImageIO.read(file);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -74,7 +86,7 @@ public class ObjectFinderController extends Controller {
                     return ok("Object not found!");
                 }
             } catch (IOException e) {
-                return ok("No object found!");
+                return ok("Object not found!");
             }
         } else {
             flash("error", "Missing file");
@@ -100,7 +112,8 @@ public class ObjectFinderController extends Controller {
 
                 List<Recognition> recognitions = this.objectRecognizer.identifyImage(imageBytes);
                 recognitions = recognitions.stream().filter(p -> p.getConfidence() > 0.7f).collect(Collectors.toList());
-                recognitions.sort(new ObjectFinderService.ConfidenceComparator().reversed());
+                //FIXME
+                recognitions.sort(new ObjectFinderServiceImpl.ConfidenceComparator().reversed());
                 
                 
                 return ok(Json.toJson(recognitions));

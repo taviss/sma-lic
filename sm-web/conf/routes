@@ -8,6 +8,7 @@ GET     /login                      controllers.UserController.login
 GET     /logout                     controllers.UserController.logoutUser
 POST    /login/submit               controllers.UserController.tryLogin
 GET     /logged                     controllers.UserController.isLogged
+GET     /register                   controllers.UserController.createUserForm
 
 POST    /locate                     controllers.ObjectFinderController.findObject
 POST    /recognize                  controllers.ObjectFinderController.recognizeObject

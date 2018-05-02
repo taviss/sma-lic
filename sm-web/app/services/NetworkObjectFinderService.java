@@ -2,9 +2,10 @@ package services;
 
 import com.sma.core.camera.api.Camera;
 import com.sma.core.camera.st.impl.ImageCamera;
-import com.sma.core.object.finder.service.ObjectFinderService;
-import com.sma.object.finder.api.ObjectRecognizer;
+import com.sma.core.object.finder.service.api.ObjectFinderService;
+import com.sma.core.object.finder.service.impl.ObjectFinderServiceImpl;
 import com.sma.object.finder.tf.TensorflowImageClassifier;
+import com.sma.object.recognizer.api.ObjectRecognizer;
 import com.typesafe.config.Config;
 import models.CameraAddress;
 
@@ -37,7 +38,7 @@ public class NetworkObjectFinderService {
         synchronized (cache) {
             ObjectFinderService objectFinderService = cache.get(userId);
             if(objectFinderService == null) {
-                objectFinderService = new ObjectFinderService();
+                objectFinderService = new ObjectFinderServiceImpl();
                 objectFinderService.bindObjectRecoginzer(this.objectRecognizer);
                 objectFinderService.bindImageClassifier(this.objectRecognizer);
                 for(Camera camera : cameras) {

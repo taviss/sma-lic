@@ -35,21 +35,26 @@ app.controller('userController', function ($scope, AccountService, UserService) 
     $scope.pass.new = "";
     $scope.pass.repeat = "";
     $scope.errors = {};
-
-    UserService.isAuthenticated(function (success) {
-        if(success) {
-            $scope.loggedIn = true;
-        }
-    });
+    
+    $scope.isAuthenticated = function() {
+           UserService.isAuthenticated(function (success) {
+                if(success) {
+                    window.location = '/';
+                }
+           });
+    }
+    
+    $scope.isAuthenticated();
 
     $scope.addUser = function() {
         AccountService.addUser($scope.user)
-            .error(function (response) {
-                alert(response);
+            .error(function (error, response) {
+                console.log(error)
+                $scope.errors = error;
             })
 
             .success(function () {
-                alert("User created!");
+                window.location = '/login';
             });
     };
 

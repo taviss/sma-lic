@@ -13,6 +13,11 @@ public class CameraAddress {
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Constraints.Required
+    @Enumerated(EnumType.STRING)
+    @Column(name = "c_type", nullable = false)
+    private CameraType cameraType;
 
     @Column(name = "c_address", nullable = false)
     @Constraints.MinLength(3)

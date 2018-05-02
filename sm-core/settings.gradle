@@ -4,7 +4,9 @@ include 'camera'
 include 'camera.rtmp'
 include 'camera.opencv'
 
-include 'object-recognizer'
 include 'camera-network'
-include 'object-finder'
+include 'object-finder.api'
+include 'object-finder.impl'
+include 'object-recognizer.api'
+include 'object-recognizer.tf'
 

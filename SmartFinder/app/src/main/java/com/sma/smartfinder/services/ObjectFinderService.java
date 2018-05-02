@@ -71,8 +71,8 @@ public class ObjectFinderService extends IntentService {
 
             Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
             if(logged.get()) {
-                Future<String> response = HTTPUtility.postImage(camerasAddress + "/locate", bmp);
-                handleResponse(response.get());
+                Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/locate", bmp);
+                handleResponse(response.get(), intent.getStringExtra("name"));
             } else {
                 throw new IllegalStateException("Cannot log in!");
             }
@@ -93,18 +93,11 @@ public class ObjectFinderService extends IntentService {
 
     }
 
-    private void handleResponse(String response) {
-        Scanner scanner = new Scanner(response);
-        //TODO rework + test with the actual server
-        String line;
-        while(scanner.hasNext()) {
-            line = scanner.nextLine();
-            if(line.contains("imageName")) {
-
-                sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_FOUND").putExtra("imageName", line));
-                return;
-            }
+    private void handleResponse(byte[] response, String name) {
+        if(new String(response).contains("Object not found!")) {
+            sendBroadcast(new Intent("com.sma.smartfinder.action.NO_OBJECT_FOUND"));
+        } else {
+            sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_FOUND").putExtra("image", response).putExtra("name", name));
         }
-        sendBroadcast(new Intent("com.sma.smartfinder.action.NO_OBJECT_FOUND"));
     }
 }

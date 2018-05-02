@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sma.com.smartfinder">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name="com.sma.smartfinder.SmartFinderApplication"
@@ -28,9 +28,8 @@
         </activity>
         <activity android:name="com.sma.smartfinder.FindObjectActivity" />
 
-        <service android:name="com.sma.smartfinder.services.ObjectFinderService"></service>
-        <service android:name="com.sma.smartfinder.services.ObjectRecoginzerService"></service>
-
+        <service android:name="com.sma.smartfinder.services.ObjectFinderService" />
+        <service android:name="com.sma.smartfinder.services.ObjectRecoginzerService" />
 
         <receiver android:name="com.sma.smartfinder.receivers.ObjectRecognitionReceiver">
             <intent-filter>
@@ -38,11 +37,17 @@
                 <action android:name="com.sma.smartfinder.action.OBJECT_NOT_RECOGNIZED" />
             </intent-filter>
         </receiver>
+        <receiver android:name="com.sma.smartfinder.receivers.ObjectFindReceiver">
+            <intent-filter>
+                <action android:name="com.sma.smartfinder.action.OBJECT_FOUND" />
+                <action android:name="com.sma.smartfinder.action.NO_OBJECT_FOUND" />
+            </intent-filter>
+        </receiver>
 
-        <activity android:name="com.sma.smartfinder.ObjectRecognizedActivity"></activity>
-        <activity android:name="com.sma.smartfinder.SettingsActivity"></activity>
-        <activity android:name="com.sma.smartfinder.DetailsActivity"></activity>
-
+        <activity android:name="com.sma.smartfinder.ObjectRecognizedActivity" />
+        <activity android:name="com.sma.smartfinder.SettingsActivity" />
+        <activity android:name="com.sma.smartfinder.DetailsActivity" />
+        <activity android:name="com.sma.smartfinder.ObjectFoundActivity"></activity>
     </application>
 
 </manifest>

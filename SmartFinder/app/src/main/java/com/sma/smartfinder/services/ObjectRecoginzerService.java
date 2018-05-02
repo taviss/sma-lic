@@ -75,8 +75,8 @@ public class ObjectRecoginzerService  extends IntentService {
 
             Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
             if(logged.get()) {
-                Future<String> response = HTTPUtility.postImage(camerasAddress + "/recognize", bmp);
-                handleResponse(response.get(), filename);
+                Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/recognize", bmp);
+                handleResponse(new String(response.get()), filename);
             } else {
                 handleResponse(null, null);
             }

@@ -66,7 +66,7 @@ public class DetailsFragment extends Fragment {
                     stream.close();
                     currentImage.recycle();
 
-                    requestLocateIntent.putExtra("locate_image", filename);
+                    requestLocateIntent.putExtra("locate_image", filename).putExtra("name", textName.getText());
                     getActivity().startService(requestLocateIntent);
                     //getActivity().startActivity(new Intent(getContext(), FindObjectActivity.class));
                 } catch(IOException e) {

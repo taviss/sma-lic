@@ -6,10 +6,10 @@ import java.net.URI;
 import java.time.Clock;
 
 import com.google.inject.Inject;
-import com.sma.object.finder.api.ObjectRecognizer;
 import com.sma.object.finder.tf.TensorflowImageClassifier;
 import com.sma.object.finder.tf.TensorflowMultibox;
 import com.sma.object.finder.tf.TensorflowObjectDetectionAPI;
+import com.sma.object.recognizer.api.ObjectRecognizer;
 import com.typesafe.config.Config;
 import play.Configuration;
 import play.Environment;

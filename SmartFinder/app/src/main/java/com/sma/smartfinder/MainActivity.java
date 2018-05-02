@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity {
         //Log.i(TAG, "objectFinderService#onHandleIntent()");
 
 
-
+        /*
                 try {
                     Intent requestLocateIntent = new Intent(MainActivity.this, ObjectRecoginzerService.class);
 
@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
                 } catch(IOException e) {
                     Toast.makeText(getApplicationContext(), "There was an error with sending the image to the ObjectFinderService!", Toast.LENGTH_LONG).show();
                 }
-
+        */
 
     }
 

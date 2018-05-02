@@ -1,7 +1,20 @@
 package com.sma.smartfinder.http.utils;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.sma.smartfinder.SettingsActivity;
+import com.sma.smartfinder.SmartFinderApplicationHolder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +47,23 @@ public class HTTPUtility {
     private static final CookieManager cookieManager = new CookieManager();
 
     private static final ExecutorService executors = Executors.newFixedThreadPool(3);
+
+    private static final AsyncHttpClient client = new AsyncHttpClient();
+
+    public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.get(getAbsoluteUrl(url), params, responseHandler);
+    }
+
+    public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.post(getAbsoluteUrl(url), params, responseHandler);
+    }
+
+    private static String getAbsoluteUrl(String url) {
+        String cameraAddress = SmartFinderApplicationHolder.getApplication().getCameraAddress();
+        return cameraAddress + "/" + url;
+    }
+
+
 
     public static Future<Boolean> login(final String urlString, final String userField, final String user, final String passwordField, final String password) throws JSONException, IOException {
 
@@ -119,16 +149,16 @@ public class HTTPUtility {
     }
 
 
-    public static Future<String> postImage(String urlString, Bitmap bitmap) throws IOException {
+    public static Future<byte[]> postImage(String urlString, Bitmap bitmap) throws IOException {
         return postImage(urlString, bitmap, new HashMap<String, String>());
     }
 
 
-    public static Future<String> postImage(final String urlString, final Bitmap bitmap, final HashMap<String, String> extras) throws IOException {
+    public static Future<byte[]> postImage(final String urlString, final Bitmap bitmap, final HashMap<String, String> extras) throws IOException {
         return executors.submit(
-                new Callable<String>() {
+                new Callable<byte[]>() {
                     @Override
-                    public String call() throws Exception {
+                    public byte[] call() throws Exception {
                         HttpURLConnection httpUrlConnection = null;
                         URL url = new URL("http://" + urlString);
                         httpUrlConnection = (HttpURLConnection) url.openConnection();
@@ -193,24 +223,22 @@ public class HTTPUtility {
                         InputStream responseStream = new
                                 BufferedInputStream(httpUrlConnection.getInputStream());
 
-                        BufferedReader responseStreamReader =
-                                new BufferedReader(new InputStreamReader(responseStream));
-
-                        String line = "";
-                        StringBuilder stringBuilder = new StringBuilder();
-
-                        while ((line = responseStreamReader.readLine()) != null) {
-                            stringBuilder.append(line).append("\n");
+                        byte[] resultBuff = new byte[0];
+                        byte[] buff = new byte[1024];
+                        int k = -1;
+                        while((k = responseStream.read(buff, 0, buff.length)) > -1) {
+                            byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size = bytes already read + bytes last read
+                            System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length); // copy previous bytes
+                            System.arraycopy(buff, 0, tbuff, resultBuff.length, k);  // copy current lot
+                            resultBuff = tbuff; // call the temp buffer as your result buff
                         }
-                        responseStreamReader.close();
 
-                        String response = stringBuilder.toString();
 
                         responseStream.close();
 
                         httpUrlConnection.disconnect();
 
-                        return response;
+                        return resultBuff;
                     }
                 }
         );

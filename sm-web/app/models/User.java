@@ -4,6 +4,7 @@ import lombok.Data;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by octavian.salcianu on 8/29/2016.
@@ -42,4 +43,7 @@ public class User {
     @Constraints.MaxLength(256)
     @Constraints.Required
     private String userPass;
+    
+    @OneToMany(mappedBy = "owner")
+    private List<CameraAddress> cameraAddresses;
 }

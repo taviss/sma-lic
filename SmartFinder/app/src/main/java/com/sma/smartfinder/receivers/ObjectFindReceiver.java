@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.sma.smartfinder.ObjectFoundActivity;
 import com.sma.smartfinder.ObjectRecognizedActivity;
 import com.sma.smartfinder.SmartFinderApplication;
 
@@ -21,11 +22,11 @@ public class ObjectFindReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(((SmartFinderApplication) context.getApplicationContext()).isInForeground()) {
-            if (intent.getAction().equals("com.sma.smartfinder.action.OBJECT_NOT_RECOGNIZED")) {
+            if (intent.getAction().equals("com.sma.smartfinder.action.NO_OBJECT_FOUND")) {
                 Toast.makeText(context, "Object could not be found using the camera server", Toast.LENGTH_LONG).show();
-            } else if (intent.getAction().equals("com.sma.smartfinder.action.OBJECT_RECOGNIZED")) {
-                Intent objectRecognizedIntent = new Intent(context, ObjectRecognizedActivity.class);
-                objectRecognizedIntent.putExtra("image", intent.getStringExtra("image")).putStringArrayListExtra("recognitions", intent.getStringArrayListExtra("recognitions"));
+            } else if (intent.getAction().equals("com.sma.smartfinder.action.OBJECT_FOUND")) {
+                Intent objectRecognizedIntent = new Intent(context, ObjectFoundActivity.class);
+                objectRecognizedIntent.putExtra("image", intent.getByteArrayExtra("image")).putExtra("name", intent.getStringExtra("name"));
                 context.startActivity(objectRecognizedIntent);
             }
         } else {
@@ -34,7 +35,7 @@ public class ObjectFindReceiver extends BroadcastReceiver {
             PendingIntent operation = PendingIntent.getActivity(
                     context,
                     -1,
-                    new Intent(context, ObjectRecognizedActivity.class).putStringArrayListExtra("recognitions", intent.getStringArrayListExtra("recognitions")),
+                    new Intent(context, ObjectFoundActivity.class).putExtra("image", intent.getByteArrayExtra("image")).putExtra("name", intent.getStringExtra("name")),
                     PendingIntent.FLAG_ONE_SHOT
             );
 

@@ -35,4 +35,11 @@ app.controller('mainController', function ($scope, UserService) {
             $scope.loggedIn = true;
         }
     });
+    
+    $scope.logoutUser = function() {
+            UserService.logoutUser()
+                .success(function() {
+                    window.location = "/";
+             });
+    }
 });

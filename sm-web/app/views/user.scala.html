@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html ng-app="sm-web">
 <head>
-    <title>Add user</title>
+    <title>Registration</title>
     <script src="https://code.angularjs.org/1.5.8/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.js"></script>
@@ -19,25 +19,30 @@
 <div id="menu">
     <ul>
         <li><a href="/">Index</a></li>
-        <li><a href="/projects/upload">Upload</a></li>
-        <li><a href="/projects/report">Report</a></li>
-        <li><a href="/acp" ng-show="loggedIn">ACP</a></li>
-        <li id="logout-button" ng-show="loggedIn"><a href="/logout">Logout</a></li>
     </ul>
 </div>
 <div id="wrapper">
     <div id="main">
-        <h2>Add a new user</h2>
+        <h2>Register</h2>
         <hr />
         <form name="user-add-form">
             Username: <br />
             <input type="text" class="valid" placeholder="" ng-model="user.userName" required />
+            <div class="error" ng-repeat="error in errors.userName">
+                {{error}}
+            </div>
             <br />
             Email: <br />
             <input type="text" class="valid" placeholder="" ng-model="user.userMail" required />
+            <div class="error" ng-repeat="error in errors.userMail">
+                {{error}}
+            </div>
             <br />
             Password: <br />
-            <input type="text" class="valid" placeholder="" ng-model="user.userPass" required />
+            <input type="password" class="valid" placeholder="" ng-model="user.userPass" required />
+            <div class="error" ng-repeat="error in errors.userPass">
+                {{error}}
+            </div>
             <br />
             <button ng-click = "addUser()">Send</button>
         </form>

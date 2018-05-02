@@ -27,5 +27,8 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
     compile 'org.tensorflow:tensorflow-android:+'
     compile 'com.flurgle:camerakit:0.9.13'
+    // https://mvnrepository.com/artifact/com.loopj.android/android-async-http
+    compile group: 'com.loopj.android', name: 'android-async-http', version: '1.4.9'
+
     testCompile 'junit:junit:4.12'
 }
