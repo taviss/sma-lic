@@ -263,7 +263,7 @@ public class TensorflowMultibox implements ObjectRecognizer {
                         });
 
         for (int i = 0; i < outputScores.length; ++i) {
-            pq.add(new TensorflowRecognition("" + i, null, outputScores[i]));
+            pq.add(new TensorflowRecognition("" + i, null, outputScores[i], imageBytes));
         }
 
         final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();

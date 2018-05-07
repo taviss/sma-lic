@@ -47,7 +47,7 @@ public class TensorflowImageClassifier implements ObjectRecognizer {
                             labels.get(bestLabelIdx),
                             labelProbabilities[bestLabelIdx] * 100f));
             
-            TensorflowRecognition recognition = new TensorflowRecognition(Integer.toString(bestLabelIdx), labels.get(bestLabelIdx), labelProbabilities[bestLabelIdx]);
+            TensorflowRecognition recognition = new TensorflowRecognition(Integer.toString(bestLabelIdx), labels.get(bestLabelIdx), labelProbabilities[bestLabelIdx], imageBytes);
             
             
             return Arrays.asList();

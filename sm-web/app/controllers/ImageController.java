@@ -8,6 +8,7 @@ import models.dao.UserDAO;
 import play.data.Form;
 import play.data.FormFactory;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -56,9 +57,9 @@ public class ImageController extends Controller {
             if(uploadSuccess) {
                 
                 uploadedImage.setOwner(foundUser);
-                imageDAO.create(uploadedImage);
+                Image image = imageDAO.create(uploadedImage);
                 
-                return ok("File uploaded");
+                return ok(Json.toJson(image));
             } else {
                 return badRequest("Error while uploading");
             }

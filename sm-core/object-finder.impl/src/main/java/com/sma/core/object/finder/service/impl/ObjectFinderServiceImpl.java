@@ -32,11 +32,11 @@ public class ObjectFinderServiceImpl implements ObjectFinderService{
         this.imageClassifier = objectRecognizer;
     }
 
-    public List<byte[]> findObject(byte[] imageBytes) {
-        List<byte[]> globalRecognitions = new ArrayList<>();
+    public List<Recognition> findObject(byte[] imageBytes) {
+        List<Recognition> globalRecognitions = new ArrayList<>();
         
         float bestGlobalConfidence = 0.0f;
-        byte[] bestMatchSnapshot = null;
+        Recognition bestMatch = null;
         
         for(Camera camera : cameraNetwork) {
             byte[] cameraSnapshot = camera.getSnapshot();
@@ -53,16 +53,16 @@ public class ObjectFinderServiceImpl implements ObjectFinderService{
                 if(recognition.getTitle().equals(imageIdentification.get(0).getTitle())) {
                     if(bestGlobalConfidence < recognition.getConfidence()) {
                         bestGlobalConfidence = recognition.getConfidence();
-                        bestMatchSnapshot = cameraSnapshot;
+                        bestMatch = recognition;
                         globalRecognitions.clear();
                     } else if (bestGlobalConfidence == recognition.getConfidence()) {
-                        globalRecognitions.add(cameraSnapshot);
+                        globalRecognitions.add(recognition);
                     }
                 }
             }
         }
-        if(bestMatchSnapshot != null) {
-            globalRecognitions.add(bestMatchSnapshot);
+        if(bestMatch != null) {
+            globalRecognitions.add(bestMatch);
         }
         return globalRecognitions;
     }

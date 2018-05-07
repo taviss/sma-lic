@@ -59,19 +59,9 @@ public class ObjectFinderService extends IntentService {
         }
 
         try {
-            Bitmap bmp = null;
-            String filename = intent.getStringExtra("locate_image");
-            try {
-                FileInputStream is = this.openFileInput(filename);
-                bmp = BitmapFactory.decodeStream(is);
-                is.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
             Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
             if(logged.get()) {
-                Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/locate", bmp);
+                Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/locate", String.valueOf(intent.getIntExtra("img_id", 0)), intent.getStringExtra("name"));
                 handleResponse(response.get(), intent.getStringExtra("name"));
             } else {
                 throw new IllegalStateException("Cannot log in!");

@@ -5,23 +5,36 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.sma.smartfinder.http.utils.HTTPUtility;
 import com.sma.smartfinder.services.ObjectRecoginzerService;
+
+import org.json.JSONException;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
 public class MainActivity extends BaseActivity {
 
     @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i("TEST", "MainActivity#onCreate()");
 
         if(savedInstanceState == null) {
             ObjectsFragment objectsFragment = new ObjectsFragment();
@@ -30,6 +43,7 @@ public class MainActivity extends BaseActivity {
                     objectsFragment,
                     objectsFragment.getClass().getSimpleName()
             ).commit();
+
         }
 
         //Log.i(TAG, "objectFinderService#onHandleIntent()");

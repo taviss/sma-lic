@@ -36,13 +36,11 @@ public class ObjectsFragment extends ListFragment implements LoaderManager.Loade
     private static final String[] FROM = {
             ObjectContract.Column.OBJECT_NAME,
             ObjectContract.Column.CREATED_AT,
-            //StatusContract.Column.CREATED_AT
     };
 
     private static final int[] TO = {
             R.id.list_item_object_name,
             R.id.list_item_created_at,
-            //R.id.list_item_freshness
     };
 
     private static final int LOADER_ID = 42;

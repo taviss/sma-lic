@@ -44,6 +44,6 @@ public class User {
     @Constraints.Required
     private String userPass;
     
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "owner")
     private List<CameraAddress> cameraAddresses;
 }

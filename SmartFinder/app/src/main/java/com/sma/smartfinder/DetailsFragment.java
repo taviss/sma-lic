@@ -56,22 +56,11 @@ public class DetailsFragment extends Fragment {
         btnLocate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    Intent requestLocateIntent = new Intent(getActivity(), ObjectFinderService.class);
+                Intent requestLocateIntent = new Intent(getActivity(), ObjectFinderService.class);
 
-                    String filename = "img_locate.png";
-                    FileOutputStream stream = getActivity().openFileOutput(filename, Context.MODE_PRIVATE);
-                    currentImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-
-                    stream.close();
-                    currentImage.recycle();
-
-                    requestLocateIntent.putExtra("locate_image", filename).putExtra("name", textName.getText());
-                    getActivity().startService(requestLocateIntent);
-                    //getActivity().startActivity(new Intent(getContext(), FindObjectActivity.class));
-                } catch(IOException e) {
-                    Toast.makeText(getContext(), "There was an error with sending the image to the ObjectFinderService!", Toast.LENGTH_LONG).show();
-                }
+                requestLocateIntent.putExtra("img_id", currentId).putExtra("name", textName.getText());
+                getActivity().startService(requestLocateIntent);
+                //getActivity().startActivity(new Intent(getContext(), FindObjectActivity.class));
             }
         });
 

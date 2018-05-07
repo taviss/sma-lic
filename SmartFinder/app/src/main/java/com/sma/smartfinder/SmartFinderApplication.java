@@ -28,6 +28,8 @@ public class SmartFinderApplication extends Application {
 
     private static final String TAG = SmartFinderApplication.class.getName();
 
+    private static final String DEFAULT_ADDRESS = "10.0.2.2:9000";
+
     private String user;
     private String pass;
     private String cameraAddress;
@@ -36,6 +38,7 @@ public class SmartFinderApplication extends Application {
     public void onCreate() {
         super.onCreate();
         SmartFinderApplicationHolder.setApplication(this);
+        updateLoginDetails();
     }
 
     public String getUser() {
@@ -55,18 +58,14 @@ public class SmartFinderApplication extends Application {
 
         String username = preferences.getString("username", "");
         String password = preferences.getString("password", "");
-        String cameraAddress = preferences.getString("camera_server_address", "");
+        String cameraAddress = preferences.getString("camera_server_address", DEFAULT_ADDRESS);
 
         Log.i(TAG, "Retrieved username as " + username);
         Log.i(TAG, "Retrieved camera_server_address as " + cameraAddress);
         //Log.d(TAG, "Retrieved password as " + password);
 
-        if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(cameraAddress)) {
-            startActivity(new Intent(this, SettingsActivity.class));
-        } else {
-            this.cameraAddress = cameraAddress;
-            this.user = username;
-            this.pass = password;
-        }
+        this.cameraAddress = cameraAddress;
+        this.user = username;
+        this.pass = password;
     }
 }

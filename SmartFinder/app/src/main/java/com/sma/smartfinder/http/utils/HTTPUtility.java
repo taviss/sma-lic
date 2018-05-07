@@ -1,19 +1,12 @@
 package com.sma.smartfinder.http.utils;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.sma.smartfinder.SettingsActivity;
 import com.sma.smartfinder.SmartFinderApplicationHolder;
 
 import org.json.JSONException;
@@ -151,6 +144,61 @@ public class HTTPUtility {
 
     public static Future<byte[]> postImage(String urlString, Bitmap bitmap) throws IOException {
         return postImage(urlString, bitmap, new HashMap<String, String>());
+    }
+
+    public static Future<byte[]> postImage(final String urlString, final String id, final String name) throws IOException {
+        return executors.submit(
+                new Callable<byte[]>() {
+                    @Override
+                    public byte[] call() throws Exception {
+                        HttpURLConnection httpUrlConnection = null;
+                        URL url = new URL("http://" + urlString);
+                        httpUrlConnection = (HttpURLConnection) url.openConnection();
+                        httpUrlConnection.setUseCaches(false);
+                        httpUrlConnection.setDoOutput(true);
+
+                        if (cookieManager.getCookieStore().getCookies().size() > 0) {
+                            httpUrlConnection.setRequestProperty("Cookie",
+                                    TextUtils.join(";",  cookieManager.getCookieStore().getCookies()));
+                        }
+
+                        httpUrlConnection.setRequestMethod("POST");
+                        httpUrlConnection.setRequestProperty("Accept","application/json");
+                        httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+
+                        JSONObject jsonParam = new JSONObject();
+                        jsonParam.put("id", id);
+                        jsonParam.put("name", name);
+
+                        Log.i("JSON", jsonParam.toString());
+                        DataOutputStream os = new DataOutputStream(httpUrlConnection.getOutputStream());
+                        os.writeBytes(jsonParam.toString());
+
+                        os.flush();
+                        os.close();
+
+                        InputStream responseStream = new
+                                BufferedInputStream(httpUrlConnection.getInputStream());
+
+                        byte[] resultBuff = new byte[0];
+                        byte[] buff = new byte[1024];
+                        int k = -1;
+                        while((k = responseStream.read(buff, 0, buff.length)) > -1) {
+                            byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size = bytes already read + bytes last read
+                            System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length); // copy previous bytes
+                            System.arraycopy(buff, 0, tbuff, resultBuff.length, k);  // copy current lot
+                            resultBuff = tbuff; // call the temp buffer as your result buff
+                        }
+
+
+                        responseStream.close();
+
+                        httpUrlConnection.disconnect();
+
+                        return resultBuff;
+                    }
+                }
+        );
     }
 
 

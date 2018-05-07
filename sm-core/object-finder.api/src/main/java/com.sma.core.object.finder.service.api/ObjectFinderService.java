@@ -2,6 +2,7 @@ package com.sma.core.object.finder.service.api;
 
 import com.sma.core.camera.api.Camera;
 import com.sma.object.recognizer.api.ObjectRecognizer;
+import com.sma.object.recognizer.api.Recognition;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public interface ObjectFinderService {
      * @param imageBytes
      * @return
      */
-    List<byte[]> findObject(byte[] imageBytes);
+    List<Recognition> findObject(byte[] imageBytes);
 
     /**
      * Adds a camera to this object finder

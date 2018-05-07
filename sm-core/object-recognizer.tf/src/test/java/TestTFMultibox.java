@@ -1,5 +1,6 @@
-import com.sma.object.finder.api.ObjectRecognizer;
+
 import com.sma.object.finder.tf.TensorflowObjectDetectionAPI;
+import com.sma.object.recognizer.api.ObjectRecognizer;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;

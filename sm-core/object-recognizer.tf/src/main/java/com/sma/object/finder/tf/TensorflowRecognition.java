@@ -18,12 +18,15 @@ public class TensorflowRecognition implements Recognition {
      * A sortable score for how good the recognition is relative to others. Higher should be better.
      */
     private final Float confidence;
+    
+    private final byte[] source;
 
     public TensorflowRecognition(
-            final String id, final String title, final Float confidence) {
+            final String id, final String title, final Float confidence, final byte[] source) {
         this.id = id;
         this.title = title;
         this.confidence = confidence;
+        this.source = source;
     }
 
     public String getId() {
@@ -36,6 +39,11 @@ public class TensorflowRecognition implements Recognition {
 
     public Float getConfidence() {
         return confidence;
+    }
+
+    @Override
+    public byte[] getSource() {
+        return source;
     }
 
     @Override

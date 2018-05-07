@@ -72,6 +72,15 @@ body {
 
 }
 
+#login-button {
+    float: right !important;
+}
+
+#login-button a {
+
+}
+
+
 #main {
 	padding: 2%;
 	min-height: 900px;

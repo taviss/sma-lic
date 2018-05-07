@@ -24,4 +24,7 @@ public class Image {
     @ManyToOne
     @JoinColumn(name="owner_id")
     private User owner;
+    
+    @Column(name = "i_last_seen")
+    private String lastSeenImage;
 }

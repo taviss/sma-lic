@@ -170,7 +170,7 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
         // Scale them back to the input size.
         for (int i = 0; i < outputScores.length; ++i) {
             pq.add(
-                    new TensorflowRecognition("" + i, labels.get((int) outputClasses[i]), outputScores[i]));
+                    new TensorflowRecognition("" + i, labels.get((int) outputClasses[i]), outputScores[i], imageBytes));
         }
 
         final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();

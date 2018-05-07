@@ -4,8 +4,8 @@ import com.sma.core.camera.api.Camera;
 import com.sma.core.camera.st.impl.ImageCamera;
 import com.sma.core.object.finder.service.api.ObjectFinderService;
 import com.sma.core.object.finder.service.impl.ObjectFinderServiceImpl;
-import com.sma.object.finder.tf.TensorflowImageClassifier;
 import com.sma.object.recognizer.api.ObjectRecognizer;
+import com.sma.object.recognizer.api.Recognition;
 import com.typesafe.config.Config;
 import models.CameraAddress;
 
@@ -34,7 +34,7 @@ public class NetworkObjectFinderService {
     }
     
     //TODO Async
-    public List<byte[]> findObject(Long userId, List<Camera> cameras, byte[] imageBytes) {
+    public List<Recognition> findObject(Long userId, List<Camera> cameras, byte[] imageBytes) {
         synchronized (cache) {
             ObjectFinderService objectFinderService = cache.get(userId);
             if(objectFinderService == null) {

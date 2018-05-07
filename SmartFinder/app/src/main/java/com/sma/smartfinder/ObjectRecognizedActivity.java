@@ -26,11 +26,14 @@ import android.widget.Toast;
 import com.sma.smartfinder.db.ObjectContract;
 import com.sma.smartfinder.http.utils.HTTPUtility;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -72,20 +75,6 @@ public class ObjectRecognizedActivity extends BaseActivity {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         if(image != null && currentSelectionName != null) {
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] byteArray = stream.toByteArray();
-
-                            ContentValues values = new ContentValues();
-                            values.put(ObjectContract.Column.OBJECT_NAME, currentSelectionName);
-                            values.put(ObjectContract.Column.IMG, byteArray);
-                            values.put(ObjectContract.Column.CREATED_AT, new Date().getTime());
-                            Uri uri = getContentResolver().insert(ObjectContract.CONTENT_URI, values);
-
-                            if(uri != null) {
-                                Log.i(TAG, String.format("Inserted: %s", currentSelectionName));
-                            }
-
                             HashMap<String, String> extras = new HashMap<>();
                             extras.put("imageClass", currentSelectionName);
 
@@ -112,7 +101,8 @@ public class ObjectRecognizedActivity extends BaseActivity {
                             try {
                                 Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
                                 if(logged.get()) {
-                                    HTTPUtility.postImage(camerasAddress + "/images", image, extras);
+                                    Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/images", image, extras);
+                                    handleResponse(new String(response.get()));
                                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 }
                             } catch(IOException|JSONException|InterruptedException|ExecutionException e) {
@@ -188,5 +178,33 @@ public class ObjectRecognizedActivity extends BaseActivity {
                 btnAcceptObject.setVisibility(View.INVISIBLE);
             }
         });*/
+    }
+
+    public void handleResponse(String response) {
+        if(response != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                int id = (int)jsonObject.get("id");
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
+                ContentValues values = new ContentValues();
+                values.put(ObjectContract.Column.ID, id);
+                values.put(ObjectContract.Column.OBJECT_NAME, currentSelectionName);
+                values.put(ObjectContract.Column.IMG, byteArray);
+                values.put(ObjectContract.Column.CREATED_AT, new Date().getTime());
+                Uri uri = getContentResolver().insert(ObjectContract.CONTENT_URI, values);
+
+                if(uri != null) {
+                    Log.i(TAG, String.format("Inserted: %s", currentSelectionName));
+                }
+
+                return;
+            } catch (JSONException e) {
+                Log.i(TAG, e.getMessage());
+            }
+        }
     }
 }

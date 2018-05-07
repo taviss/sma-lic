@@ -19,7 +19,8 @@
             android:authorities="com.sma.smartfinder.db.ObjectProvider"
             android:exported="false" />
 
-        <activity android:name="com.sma.smartfinder.MainActivity">
+        <activity android:name="com.sma.smartfinder.MainActivity" />
+        <activity android:name="com.sma.smartfinder.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,7 +48,7 @@
         <activity android:name="com.sma.smartfinder.ObjectRecognizedActivity" />
         <activity android:name="com.sma.smartfinder.SettingsActivity" />
         <activity android:name="com.sma.smartfinder.DetailsActivity" />
-        <activity android:name="com.sma.smartfinder.ObjectFoundActivity"></activity>
+        <activity android:name="com.sma.smartfinder.ObjectFoundActivity" />
     </application>
 
 </manifest>

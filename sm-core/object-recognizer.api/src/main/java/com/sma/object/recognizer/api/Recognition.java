@@ -6,4 +6,6 @@ public interface Recognition {
     String getTitle();
 
     Float getConfidence();
+    
+    byte[] getSource();
 }
