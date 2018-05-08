@@ -192,6 +192,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
 
                 ContentValues values = new ContentValues();
                 values.put(ObjectContract.Column.ID, id);
+                values.put(ObjectContract.Column.OWNER, SmartFinderApplicationHolder.getApplication().getUser());
                 values.put(ObjectContract.Column.OBJECT_NAME, currentSelectionName);
                 values.put(ObjectContract.Column.IMG, byteArray);
                 values.put(ObjectContract.Column.CREATED_AT, new Date().getTime());

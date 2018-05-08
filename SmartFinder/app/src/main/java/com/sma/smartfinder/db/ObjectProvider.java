@@ -30,8 +30,9 @@ public class ObjectProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        Log.i(TAG, "ObjectProvider#onCreate");
         dbHelper = new DbHelper(getContext());
-        Log.d(TAG, "onCreate");
+
         return true;
     }
 
@@ -45,7 +46,9 @@ public class ObjectProvider extends ContentProvider {
             case ObjectContract.STATUS_DIR:
                 break;
             case ObjectContract.STATUS_ITEM:
-                qb.appendWhere(ObjectContract.Column.ID + "=" + uri.getLastPathSegment());
+                if(selection == null) {
+                    qb.appendWhere(ObjectContract.Column.ID + "=" + uri.getLastPathSegment());
+                }
                 break;
 
             default:
@@ -60,6 +63,7 @@ public class ObjectProvider extends ContentProvider {
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         Log.d(TAG, "queried: " + cursor.getCount());
+        Log.d(TAG, "query: " + selection + " " + selectionArgs[0]);
         return cursor;
     }
 
@@ -110,11 +114,14 @@ public class ObjectProvider extends ContentProvider {
                 where = selection == null ? "1" : selection;
                 break;
             case ObjectContract.STATUS_ITEM:
-                long id = ContentUris.parseId(uri);
-                where = ObjectContract.Column.ID +
-                        "=" +
-                        id +
-                        (TextUtils.isEmpty(selection) ? "" : " AND ( " + selection + " )");
+                where = selection;
+                if(where == null) {
+                    long id = ContentUris.parseId(uri);
+                    where = ObjectContract.Column.ID +
+                            "=" +
+                            id +
+                            (TextUtils.isEmpty(selection) ? "" : " AND ( " + selection + " )");
+                }
                 break;
 
             default:
@@ -141,11 +148,14 @@ public class ObjectProvider extends ContentProvider {
                 where = selection;
                 break;
             case ObjectContract.STATUS_ITEM:
-                long id = ContentUris.parseId(uri);
-                where = ObjectContract.Column.ID +
-                        "=" +
-                        id +
-                        (TextUtils.isEmpty(selection) ? "" : " AND ( " + selection + " )");
+                where = selection;
+                if(where == null) {
+                    long id = ContentUris.parseId(uri);
+                    where = ObjectContract.Column.ID +
+                            "=" +
+                            id +
+                            (TextUtils.isEmpty(selection) ? "" : " AND ( " + selection + " )");
+                }
                 break;
 
             default:

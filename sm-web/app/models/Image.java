@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import play.data.validation.Constraints;
 
@@ -23,6 +24,7 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(name="owner_id")
+    @JsonIgnore
     private User owner;
     
     @Column(name = "i_last_seen")

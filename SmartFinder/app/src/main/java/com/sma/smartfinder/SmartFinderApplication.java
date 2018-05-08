@@ -37,6 +37,7 @@ public class SmartFinderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i(TAG, "SMApp#onCreate()");
         SmartFinderApplicationHolder.setApplication(this);
         updateLoginDetails();
     }

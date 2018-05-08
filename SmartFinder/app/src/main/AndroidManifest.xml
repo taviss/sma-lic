@@ -49,6 +49,7 @@
         <activity android:name="com.sma.smartfinder.SettingsActivity" />
         <activity android:name="com.sma.smartfinder.DetailsActivity" />
         <activity android:name="com.sma.smartfinder.ObjectFoundActivity" />
+        <activity android:name="com.sma.smartfinder.RegisterActivity"></activity>
     </application>
 
 </manifest>

@@ -28,6 +28,7 @@ public class ObjectContract {
 
     public class Column {
         public static final String ID = BaseColumns._ID;
+        public static final String OWNER = "owner";
         public static final String OBJECT_NAME = "object_name";
         public static final String IMG = "img";
         public static final String CREATED_AT =  "created_at";

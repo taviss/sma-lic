@@ -57,6 +57,89 @@ public class HTTPUtility {
     }
 
 
+    public static Future<Boolean> register(final String urlString, final String userField, final String user, final String mailField, final String mail, final String passwordField, final String password) throws JSONException, IOException {
+
+        return executors.submit(
+                new Callable<Boolean>() {
+
+                    @Override
+                    public Boolean call() throws Exception {
+                        HttpURLConnection httpUrlConnection = null;
+                        URL url = new URL("http://" + urlString);
+                        httpUrlConnection = (HttpURLConnection) url.openConnection();
+                        httpUrlConnection.setUseCaches(false);
+                        httpUrlConnection.setDoOutput(true);
+
+                        if (cookieManager.getCookieStore().getCookies().size() > 0) {
+                            httpUrlConnection.setRequestProperty("Cookie",
+                                    TextUtils.join(";",  cookieManager.getCookieStore().getCookies()));
+                        }
+
+                        httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+                        httpUrlConnection.setRequestProperty("Accept", "application/json");
+                        httpUrlConnection.setRequestMethod("POST");
+                        httpUrlConnection.setRequestProperty("Connection", "Keep-Alive");
+                        httpUrlConnection.setRequestProperty("Cache-Control", "no-cache");
+
+                    /*
+                    String string = "";
+                    string = string.concat(userField).concat("=").concat(user).concat("&");
+                    string = string.concat(passwordField).concat("=").concat(password);*/
+
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put(userField, user);
+                        jsonObject.put(mailField, mail);
+                        jsonObject.put(passwordField, password);
+
+                        DataOutputStream request = new DataOutputStream(
+                                httpUrlConnection.getOutputStream());
+                        //request.write(string.getBytes("UTF-8"));
+
+                        request.write(jsonObject.toString().getBytes("UTF-8"));
+
+                        request.flush();
+                        request.close();
+                        int responseCode = httpUrlConnection.getResponseCode();
+
+                        if(responseCode == HttpURLConnection.HTTP_BAD_REQUEST
+                                || responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
+                            return false;
+                        }
+
+                        Map<String, List<String>> headerFields = httpUrlConnection.getHeaderFields();
+                        List<String> cookiesHeader = headerFields.get(COOKIES_HEADER);
+
+                        if (cookiesHeader != null) {
+                            for (String cookie : cookiesHeader) {
+                                cookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
+                            }
+                        }
+
+                        InputStream responseStream = new
+                                BufferedInputStream(httpUrlConnection.getInputStream());
+
+                        BufferedReader responseStreamReader =
+                                new BufferedReader(new InputStreamReader(responseStream));
+
+                        String line = "";
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        while ((line = responseStreamReader.readLine()) != null) {
+                            stringBuilder.append(line).append("\n");
+                        }
+                        responseStreamReader.close();
+
+                        String response = stringBuilder.toString();
+
+                        responseStream.close();
+
+                        httpUrlConnection.disconnect();
+
+                        return true;
+                    }
+                });
+
+    }
 
     public static Future<Boolean> login(final String urlString, final String userField, final String user, final String passwordField, final String password) throws JSONException, IOException {
 

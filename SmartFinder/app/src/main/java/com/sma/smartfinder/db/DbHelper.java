@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.sma.smartfinder.SmartFinderApplicationHolder;
+
 /**
  * Created by octavian.salcianu on 12/19/2017.
  */
@@ -19,9 +21,10 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = String
-                .format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s text, %s blob, %s int)",
+                .format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s text, %s text, %s blob, %s int)",
                         ObjectContract.TABLE,
                         ObjectContract.Column.ID,
+                        ObjectContract.Column.OWNER,
                         ObjectContract.Column.OBJECT_NAME,
                         ObjectContract.Column.IMG,
                         ObjectContract.Column.CREATED_AT);

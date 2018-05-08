@@ -1,11 +1,11 @@
 package com.sma.smartfinder;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,45 +23,39 @@ import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
-public class LoginActivity extends BaseActivity {
+public class RegisterActivity extends BaseActivity {
     private EditText userText;
+    private EditText emailText;
     private EditText passText;
-    private Button loginButton;
-    private TextView signupView;
+    private Button registerButton;
+    private TextView loginView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register);
 
         final SmartFinderApplication smartFinderApplication = SmartFinderApplicationHolder.getApplication();
-        final String user = smartFinderApplication.getUser();
-        final String pass = smartFinderApplication.getPass();
-        final String address = smartFinderApplication.getCameraAddress();
 
-        if(user != null && address != null && pass != null) {
-            tryLogin(address, user, pass);
-        }
+        userText = findViewById(R.id.register_user);
+        passText = findViewById(R.id.register_password);
+        emailText = findViewById(R.id.register_mail);
+        registerButton = findViewById(R.id.register_button);
+        loginView = findViewById(R.id.login_info);
 
-        setContentView(R.layout.activity_login);
-
-        userText = findViewById(R.id.login_user);
-        passText = findViewById(R.id.login_password);
-        loginButton = findViewById(R.id.login_button);
-        signupView = findViewById(R.id.register_info);
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(validate(userText.getText().toString(), passText.getText().toString())) {
-                    tryLogin(smartFinderApplication.getCameraAddress(), userText.getText().toString(), passText.getText().toString());
+                if(validate(userText.getText().toString(), emailText.getText().toString(), passText.getText().toString())) {
+                    tryRegister(smartFinderApplication.getCameraAddress(), emailText.getText().toString(), userText.getText().toString(), passText.getText().toString());
                 }
             }
         });
 
-        signupView.setOnClickListener(new View.OnClickListener() {
+        loginView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
         });
     }
@@ -71,34 +65,34 @@ public class LoginActivity extends BaseActivity {
         moveTaskToBack(true);
     }
 
-    public void tryLogin(String address, String user, String pass) {
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+    public void tryRegister(String address, String mail, String user, String pass) {
+        final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this,
                 R.style.AppTheme);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
         try {
             progressDialog.show();
-            Future<Boolean> loggedIn = HTTPUtility.login(address + "/login/submit", "userName", user, "userPass", pass);
-            if (loggedIn.get()) {
+            Future<Boolean> registered = HTTPUtility.register(address + "/users", "userName", user, "userMail", mail, "userPass", pass);
+            if (registered.get()) {
                 progressDialog.dismiss();
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 preferences.edit().putString("username", user).apply();
                 preferences.edit().putString("password", pass).apply();
                 preferences.edit().putString("camera_server_address", address).apply();
-                SmartFinderApplicationHolder.getApplication().updateLoginDetails();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                Log.i("TEST", "Registered in successfuly!");
+                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
             } else {
                 progressDialog.hide();
-                Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Registration failed! Please try again!", Toast.LENGTH_LONG).show();
             }
-        } catch(JSONException|IOException|InterruptedException|ExecutionException e) {
+        } catch(JSONException |IOException |InterruptedException|ExecutionException e) {
             progressDialog.hide();
-            Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Registration failed! Please try again!", Toast.LENGTH_LONG).show();
         }
     }
 
-    public boolean validate(String user, String password) {
+    public boolean validate(String user, String mail, String password) {
         boolean valid = true;
 
         if (user.isEmpty()) {
@@ -106,6 +100,13 @@ public class LoginActivity extends BaseActivity {
             valid = false;
         } else {
             userText.setError(null);
+        }
+
+        if (mail.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(mail).matches()) {
+            emailText.setError("Invalid email!");
+            valid = false;
+        } else {
+            emailText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 6) {
