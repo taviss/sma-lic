@@ -23,6 +23,8 @@ public class ObjectRecognitionReceiver extends BroadcastReceiver {
         if(((SmartFinderApplication) context.getApplicationContext()).isInForeground()) {
             if (intent.getAction().equals("com.sma.smartfinder.action.OBJECT_NOT_RECOGNIZED")) {
                 Toast.makeText(context, "Object could not be found using the camera server", Toast.LENGTH_LONG).show();
+                Intent objectRecognizedIntent = new Intent(context, ObjectRecognizedActivity.class);
+                context.startActivity(objectRecognizedIntent);
             } else if (intent.getAction().equals("com.sma.smartfinder.action.OBJECT_RECOGNIZED")) {
                 Intent objectRecognizedIntent = new Intent(context, ObjectRecognizedActivity.class);
                 objectRecognizedIntent.putExtra("image", intent.getStringExtra("image")).putStringArrayListExtra("recognitions", intent.getStringArrayListExtra("recognitions"));

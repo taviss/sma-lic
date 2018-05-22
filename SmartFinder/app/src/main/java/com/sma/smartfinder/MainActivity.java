@@ -128,6 +128,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
         Log.i("TEST", "MainActivity#onCreate()");
 
+        /*
         if(savedInstanceState == null) {
             setContentView(R.layout.activity_main);
             mAdapter = new SimpleCursorAdapter(this, R.layout.objects_list, null, FROM, TO, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -175,12 +176,12 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                 }
             });
 
-        }
+        }*/
 
         //Log.i(TAG, "objectFinderService#onHandleIntent()");
 
 
-        /*
+
                 try {
                     Intent requestLocateIntent = new Intent(MainActivity.this, ObjectRecoginzerService.class);
 
@@ -190,7 +191,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                     Bitmap bmp = null;
                     //String filename = intent.getStringExtra("locate_image");
                     try {
-                        InputStream is = getAssets().open("puppy_224.bmp");//this.openFileInput(filename);
+                        InputStream is = getAssets().open("alonso2017.png");//this.openFileInput(filename);
                         bmp = BitmapFactory.decodeStream(is);
                         is.close();
                     } catch (Exception e) {
@@ -208,7 +209,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                 } catch(IOException e) {
                     Toast.makeText(getApplicationContext(), "There was an error with sending the image to the ObjectFinderService!", Toast.LENGTH_LONG).show();
                 }
-        */
+
 
     }
 

@@ -20,7 +20,7 @@
         android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:visibility="visible"
-        app:itemBackground="@color/black_transp"
+        app:itemBackground="@color/black"
         app:itemIconTint="@color/colorPrimary"
         app:itemTextColor="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"

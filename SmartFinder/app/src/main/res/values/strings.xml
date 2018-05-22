@@ -14,5 +14,6 @@
     <string name="learn_server">Training Server Address</string>
     <string name="register_info">No account? Register now!</string>
     <string name="login_info">Already have an account? Log in!</string>
+    <string name="sign_up_password">&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;</string>
 
 </resources>

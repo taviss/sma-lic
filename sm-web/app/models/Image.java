@@ -29,4 +29,7 @@ public class Image {
     
     @Column(name = "i_last_seen")
     private String lastSeenImage;
+    
+    @Column(name = "i_trainable")
+    private Boolean trainable;
 }
