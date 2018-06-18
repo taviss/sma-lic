@@ -47,8 +47,7 @@
         android:layout_marginBottom="50dp"
         android:text="@string/detect_object"
         android:textAllCaps="false"
-        android:textColor="@android:color/black"
-        android:visibility="gone" />
+        android:textColor="@android:color/black" />
 
     <Button
         android:id="@+id/btnAcceptObject"

@@ -39,6 +39,7 @@ libraryDependencies += evolutions
 //libraryDependencies += "org.apache.commons" % "commons-io" % "1.3.2"
 libraryDependencies += "org.tensorflow" % "tensorflow" % "1.6.0"
 libraryDependencies += "org.red5" % "red5-client" % "1.0.10-M5"
+libraryDependencies += "nu.pattern" % "opencv" % "2.4.9-4"
 
 
 

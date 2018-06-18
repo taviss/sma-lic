@@ -28,7 +28,7 @@ public class SmartFinderApplication extends Application {
 
     private static final String TAG = SmartFinderApplication.class.getName();
 
-    private static final String DEFAULT_ADDRESS = "10.0.2.2:9000";
+    private static final String DEFAULT_ADDRESS = "108.61.188.44";
 
     private String user;
     private String pass;
@@ -57,8 +57,8 @@ public class SmartFinderApplication extends Application {
     public void updateLoginDetails() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        String username = preferences.getString("username", "");
-        String password = preferences.getString("password", "");
+        String username = preferences.getString("username", null);
+        String password = preferences.getString("password", null);
         String cameraAddress = preferences.getString("camera_server_address", DEFAULT_ADDRESS);
 
         Log.i(TAG, "Retrieved username as " + username);

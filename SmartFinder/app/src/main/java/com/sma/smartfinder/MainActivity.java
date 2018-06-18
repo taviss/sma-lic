@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
         Log.i("TEST", "MainActivity#onCreate()");
 
-        /*
+
         if(savedInstanceState == null) {
             setContentView(R.layout.activity_main);
             mAdapter = new SimpleCursorAdapter(this, R.layout.objects_list, null, FROM, TO, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -176,11 +176,11 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                 }
             });
 
-        }*/
+        }
 
         //Log.i(TAG, "objectFinderService#onHandleIntent()");
 
-
+        /*
 
                 try {
                     Intent requestLocateIntent = new Intent(MainActivity.this, ObjectRecoginzerService.class);
@@ -210,7 +210,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                     Toast.makeText(getApplicationContext(), "There was an error with sending the image to the ObjectFinderService!", Toast.LENGTH_LONG).show();
                 }
 
-
+        */
     }
 
     @Override

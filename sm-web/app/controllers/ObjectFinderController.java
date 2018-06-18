@@ -72,12 +72,12 @@ public class ObjectFinderController extends Controller {
                 //URI fakeCameraImage = ObjectRecognizer.class.getResource("puppy_224.jpg").toURI();
                 //cameras.add(new ImageCamera("CAM1", new File("D:\\study\\lic\\sma-lic\\sm-core\\object-recognizer.tf\\src\\main\\resources\\puppies_224.jpg")));
                 //cameras.add(new ImageCamera("CAM2", new File("D:\\study\\lic\\sma-lic\\sm-core\\object-recognizer.tf\\src\\main\\resources\\puppy_224.jpg")));
-                cameras.add(new ImageCamera("CAM3", new File("D:\\tf_demo\\room.jpg")));
+                //cameras.add(new ImageCamera("CAM3", new File("D:\\tf_demo\\room.jpg")));
                 
                 User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
                 
                 for(CameraAddress cameraAddress : foundUser.getCameraAddresses()) {
-                    //cameras.add(CameraFactory.createCamera(cameraAddress));
+                    cameras.add(CameraFactory.createCamera(cameraAddress));
                 }
                 
                 Image image = imageDAO.get(id);

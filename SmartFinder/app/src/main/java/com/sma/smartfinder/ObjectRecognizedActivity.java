@@ -72,7 +72,9 @@ public class ObjectRecognizedActivity extends BaseActivity {
         objectView = (ImageView) findViewById(R.id.list_item_object_view);
 
         recognitions = getIntent().getStringArrayListExtra("recognitions");
-        recognitions.add(NONE_OF_THE_ABOVE);
+        if(recognitions != null) {
+            recognitions.add(NONE_OF_THE_ABOVE);
+        }
 
         objectLabel = (EditText) findViewById(R.id.object_label_text);
         objectLabelButton = (Button) findViewById(R.id.object_label_button);

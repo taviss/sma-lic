@@ -62,8 +62,8 @@ public class ObjectProvider extends ContentProvider {
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
-        Log.d(TAG, "queried: " + cursor.getCount());
-        Log.d(TAG, "query: " + selection + " " + selectionArgs[0]);
+        //Log.d(TAG, "queried: " + cursor.getCount());
+        //Log.d(TAG, "query: " + selection + " " + selectionArgs[0]);
         return cursor;
     }
 
