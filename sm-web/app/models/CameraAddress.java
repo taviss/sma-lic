@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import play.data.validation.Constraints;
 
@@ -25,19 +26,20 @@ public class CameraAddress {
     @Constraints.Required
     private String address;
 
-    @Column(name = "c_user", nullable = false)
+    @Column(name = "c_user")
     @Constraints.MinLength(3)
     @Constraints.MaxLength(64)
-    @Constraints.Required
+    //@Constraints.Required
     private String user;
 
-    @Column(name = "c_password", nullable = false)
+    @Column(name = "c_password")
     @Constraints.MinLength(6)
     @Constraints.MaxLength(256)
-    @Constraints.Required
+    //@Constraints.Required
     private String password;
     
     @ManyToOne
     @JoinColumn(name="owner_id")
+    @JsonIgnore
     private User owner;
 }

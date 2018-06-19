@@ -17,6 +17,7 @@
     <div id="menu">
         <ul>
             <li><a href="/">Index</a></li>
+            <li><a href="/cameras" ng-show="loggedIn">Add camera</a></li>
             <li id="logout-button" ng-show="loggedIn"><a href ng-click="logoutUser()">Logout</a></li>
             <li id="login-button" ng-show="!loggedIn"><a href="/login">Login</a></li>
         </ul>

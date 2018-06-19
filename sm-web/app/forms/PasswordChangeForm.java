@@ -35,12 +35,9 @@ public class PasswordChangeForm {
     @Constraints.MaxLength(256)
     public String newPasswordRepeat;
     
-    private UserDAO userDAO;
-    
+    /*
     @Inject
-    public PasswordChangeForm(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
+    private UserDAO userDAO;
 
     public List<ValidationError> validate() throws NoSuchAlgorithmException, InvalidKeySpecException {
         List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -65,6 +62,6 @@ public class PasswordChangeForm {
         }
 
         return errors.isEmpty() ? null : errors;
-    }
+    }*/
 }
 

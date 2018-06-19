@@ -59,5 +59,14 @@
             android:text="@string/register_info"
             android:textAlignment="center" />
 
+        <TextView
+            android:id="@+id/reset_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:paddingTop="15dp"
+            android:text="Reset password" />
+
     </LinearLayout>
 </ScrollView>

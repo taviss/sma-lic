@@ -58,7 +58,7 @@ public class Module extends AbstractModule {
             );
             bind(ObjectRecognizer.class).toInstance(tensorflowMultibox);
         } catch(IOException e) {
-            //FIXME
+            e.printStackTrace();
         }
         
         

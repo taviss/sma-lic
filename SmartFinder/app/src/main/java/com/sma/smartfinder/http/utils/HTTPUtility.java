@@ -141,6 +141,126 @@ public class HTTPUtility {
 
     }
 
+    ///reset/password/submit
+
+    public static Future<Boolean> resetPassword(final String urlString, final String userName) {
+        return executors.submit(
+                new Callable<Boolean>() {
+
+                    @Override
+                    public Boolean call() throws Exception {
+                        HttpURLConnection httpUrlConnection = null;
+                        URL url = new URL("http://" + urlString);
+                        httpUrlConnection = (HttpURLConnection) url.openConnection();
+                        httpUrlConnection.setUseCaches(false);
+                        httpUrlConnection.setDoOutput(true);
+
+                        httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+                        httpUrlConnection.setRequestProperty("Accept", "application/json");
+                        httpUrlConnection.setRequestMethod("POST");
+                        httpUrlConnection.setRequestProperty("Connection", "Keep-Alive");
+                        httpUrlConnection.setRequestProperty("Cache-Control", "no-cache");
+
+                    /*
+                    String string = "";
+                    string = string.concat(userField).concat("=").concat(user).concat("&");
+                    string = string.concat(passwordField).concat("=").concat(password);*/
+
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("userName", userName);
+
+                        DataOutputStream request = new DataOutputStream(
+                                httpUrlConnection.getOutputStream());
+                        //request.write(string.getBytes("UTF-8"));
+
+                        request.write(jsonObject.toString().getBytes("UTF-8"));
+
+                        request.flush();
+                        request.close();
+
+                        int responseCode = httpUrlConnection.getResponseCode();
+
+                        httpUrlConnection.disconnect();
+
+                        if(responseCode == HttpURLConnection.HTTP_OK) {
+                            return true;
+                        }
+
+                        return false;
+                    }
+                });
+    }
+
+    public static Future<byte[]> changePassword(final String urlString, final String oldPassword, final String newPassword) {
+        return executors.submit(
+                new Callable<byte[]>() {
+
+                    @Override
+                    public byte[] call() throws Exception {
+                        HttpURLConnection httpUrlConnection = null;
+                        URL url = new URL("http://" + urlString);
+                        httpUrlConnection = (HttpURLConnection) url.openConnection();
+                        httpUrlConnection.setUseCaches(false);
+                        httpUrlConnection.setDoOutput(true);
+
+                        if (cookieManager.getCookieStore().getCookies().size() > 0) {
+                            httpUrlConnection.setRequestProperty("Cookie",
+                                    TextUtils.join(";",  cookieManager.getCookieStore().getCookies()));
+                        }
+
+                        httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+                        httpUrlConnection.setRequestProperty("Accept", "application/json");
+                        httpUrlConnection.setRequestMethod("POST");
+                        httpUrlConnection.setRequestProperty("Connection", "Keep-Alive");
+                        httpUrlConnection.setRequestProperty("Cache-Control", "no-cache");
+
+                    /*
+                    String string = "";
+                    string = string.concat(userField).concat("=").concat(user).concat("&");
+                    string = string.concat(passwordField).concat("=").concat(password);*/
+
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("oldPassword", oldPassword);
+                        jsonObject.put("newPassword", newPassword);
+                        jsonObject.put("newPasswordRepeat", newPassword);
+
+                        DataOutputStream request = new DataOutputStream(
+                                httpUrlConnection.getOutputStream());
+                        //request.write(string.getBytes("UTF-8"));
+
+                        request.write(jsonObject.toString().getBytes("UTF-8"));
+
+                        request.flush();
+                        request.close();
+
+                        InputStream responseStream = new
+                                BufferedInputStream(httpUrlConnection.getInputStream());
+
+                        byte[] resultBuff = new byte[0];
+                        byte[] buff = new byte[1024];
+                        int k = -1;
+                        while((k = responseStream.read(buff, 0, buff.length)) > -1) {
+                            byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size = bytes already read + bytes last read
+                            System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length); // copy previous bytes
+                            System.arraycopy(buff, 0, tbuff, resultBuff.length, k);  // copy current lot
+                            resultBuff = tbuff; // call the temp buffer as your result buff
+                        }
+
+                        int responseCode = httpUrlConnection.getResponseCode();
+
+                        responseStream.close();
+
+                        httpUrlConnection.disconnect();
+
+                        if(responseCode != HttpURLConnection.HTTP_OK && resultBuff.length != 0) {
+                            return null;
+                        }
+
+                        return resultBuff;
+                    }
+                });
+    }
+
     public static Future<Boolean> login(final String urlString, final String userField, final String user, final String passwordField, final String password) throws JSONException, IOException {
 
         return executors.submit(
@@ -221,6 +341,72 @@ public class HTTPUtility {
                     return true;
                 }
             });
+
+    }
+
+    public static Future<byte[]> addCamera(final String urlString, final String address) throws JSONException, IOException {
+
+        return executors.submit(
+                new Callable<byte[]>() {
+
+                    @Override
+                    public byte[] call() throws Exception {
+                        HttpURLConnection httpUrlConnection = null;
+                        URL url = new URL("http://" + urlString);
+                        httpUrlConnection = (HttpURLConnection) url.openConnection();
+                        httpUrlConnection.setUseCaches(false);
+                        httpUrlConnection.setDoOutput(true);
+
+                        if (cookieManager.getCookieStore().getCookies().size() > 0) {
+                            httpUrlConnection.setRequestProperty("Cookie",
+                                    TextUtils.join(";",  cookieManager.getCookieStore().getCookies()));
+                        }
+
+                        httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+                        httpUrlConnection.setRequestProperty("Accept", "application/json");
+                        httpUrlConnection.setRequestMethod("POST");
+                        httpUrlConnection.setRequestProperty("Connection", "Keep-Alive");
+                        httpUrlConnection.setRequestProperty("Cache-Control", "no-cache");
+
+                    /*
+                    String string = "";
+                    string = string.concat(userField).concat("=").concat(user).concat("&");
+                    string = string.concat(passwordField).concat("=").concat(password);*/
+
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("address", address);
+                        jsonObject.put("cameraType", "OPENCV");
+
+                        DataOutputStream request = new DataOutputStream(
+                                httpUrlConnection.getOutputStream());
+                        //request.write(string.getBytes("UTF-8"));
+
+                        request.write(jsonObject.toString().getBytes("UTF-8"));
+
+                        request.flush();
+                        request.close();
+
+                        InputStream responseStream = new
+                                BufferedInputStream(httpUrlConnection.getInputStream());
+
+                        byte[] resultBuff = new byte[0];
+                        byte[] buff = new byte[1024];
+                        int k = -1;
+                        while((k = responseStream.read(buff, 0, buff.length)) > -1) {
+                            byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size = bytes already read + bytes last read
+                            System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length); // copy previous bytes
+                            System.arraycopy(buff, 0, tbuff, resultBuff.length, k);  // copy current lot
+                            resultBuff = tbuff; // call the temp buffer as your result buff
+                        }
+
+
+                        responseStream.close();
+
+                        httpUrlConnection.disconnect();
+
+                        return resultBuff;
+                    }
+                });
 
     }
 

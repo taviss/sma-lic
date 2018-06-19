@@ -33,6 +33,7 @@ public class SmartFinderApplication extends Application {
     private String user;
     private String pass;
     private String cameraAddress;
+    private boolean tryLogin = true;
 
     @Override
     public void onCreate() {
@@ -54,6 +55,18 @@ public class SmartFinderApplication extends Application {
         return this.cameraAddress;
     }
 
+    public void disableLogin() {
+        this.tryLogin = false;
+    }
+
+    public boolean tryLogin() {
+        boolean ret = tryLogin;
+        if(!ret)
+            tryLogin = true;
+
+        return ret;
+    }
+
     public void updateLoginDetails() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -68,5 +81,6 @@ public class SmartFinderApplication extends Application {
         this.cameraAddress = cameraAddress;
         this.user = username;
         this.pass = password;
+        this.tryLogin = true;
     }
 }

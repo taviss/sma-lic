@@ -1,0 +1,6 @@
+mail.confirmation.subject = Confirmation mail
+mail.confirmation.body = Welcome to hell
+mail.password.reset.subject = Password reset
+mail.password.reset.body = Click to reset your password
+mail.password.random.subject = Your new password
+mail.password.random.body = Please log in with the following password and change it ASAP:

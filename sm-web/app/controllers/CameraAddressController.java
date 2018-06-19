@@ -7,6 +7,7 @@ import models.dao.CameraAddressDAO;
 import models.dao.UserDAO;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -48,8 +49,8 @@ public class CameraAddressController extends Controller {
         cameraAddress.setOwner(foundUser);
         //TODO How to handle this -> needed in plaintext for connection to camera
         //cameraAddress.setPassword(hashPassword(cameraAddress.getPassword().toCharArray()));
-        cameraAddressDAO.create(cameraAddress);
-        return ok("Success");
+        CameraAddress cameraAddressRes = cameraAddressDAO.create(cameraAddress);
+        return ok(Json.toJson(cameraAddressRes));
     }
 
     @Security.Authenticated(Secured.class)

@@ -28,6 +28,7 @@ public class LoginActivity extends BaseActivity {
     private EditText passText;
     private Button loginButton;
     private TextView signupView;
+    private TextView resetPassView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,9 @@ public class LoginActivity extends BaseActivity {
         final String user = smartFinderApplication.getUser();
         final String pass = smartFinderApplication.getPass();
         final String address = smartFinderApplication.getCameraAddress();
+        final boolean tryLogin = smartFinderApplication.tryLogin();
 
-        if(user != null && address != null && pass != null) {
+        if(user != null && address != null && pass != null && tryLogin) {
             tryLogin(address, user, pass);
         }
 
@@ -46,8 +48,16 @@ public class LoginActivity extends BaseActivity {
 
         userText = findViewById(R.id.login_user);
         passText = findViewById(R.id.login_password);
+
+        if(user != null)
+            userText.setText(user);
+
+        if(pass != null)
+            passText.setText(pass);
+
         loginButton = findViewById(R.id.login_button);
         signupView = findViewById(R.id.register_info);
+        resetPassView = findViewById(R.id.reset_password);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +72,20 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            }
+        });
+
+        resetPassView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Future<Boolean> reset = HTTPUtility.resetPassword(smartFinderApplication.getCameraAddress() + "/reset/password/submit", smartFinderApplication.getUser());
+                    if (reset.get()) {
+                        Toast.makeText(getApplicationContext(), "A link was sent to your email address!", Toast.LENGTH_LONG).show();
+                    }
+                } catch(InterruptedException|ExecutionException e) {
+                    Toast.makeText(getApplicationContext(), "Unable to reset password!", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

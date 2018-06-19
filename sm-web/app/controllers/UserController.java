@@ -1,10 +1,13 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import forms.LoginForm;
 import forms.PasswordChangeForm;
+import forms.PasswordResetForm;
 import models.User;
 import models.dao.UserDAO;
+import org.apache.commons.mail.EmailException;
 import play.Logger;
 import play.data.Form;
 import play.data.FormFactory;
@@ -12,6 +15,8 @@ import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.*;
+import services.Mailer;
+import utils.PasswordHashing;
 import views.html.index;
 import views.html.login;
 import views.html.password;
@@ -19,6 +24,7 @@ import views.html.user;
 
 import javax.inject.Inject;
 
+import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
@@ -36,6 +42,9 @@ public class UserController extends Controller {
 
     @Inject
     private UserDAO userDAO;
+    
+    @Inject
+    private Mailer mailerClient;
 
     @Security.Authenticated(Secured.class)
     @Transactional
@@ -140,7 +149,7 @@ public class UserController extends Controller {
         Form<PasswordChangeForm> form = formFactory.form(PasswordChangeForm.class).bindFromRequest();
 
         if (form.hasErrors()) {
-            return badRequest(form.errorsAsJson());
+            return ok(form.errorsAsJson());
         }
 
         User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
@@ -155,5 +164,61 @@ public class UserController extends Controller {
     @Transactional
     public Result changeUserPasswordForm() {
         return(ok(password.render()));
+    }
+
+    /**
+     * Send a token by email if userName and userMail match. The token can then be used to reset password
+     * @return Result
+     * @throws EmailException
+     * @throws MalformedURLException
+     */
+    @Transactional
+    @BodyParser.Of(value = BodyParser.Json.class)
+    public Result resetUserPassword() throws EmailException, MalformedURLException {
+        JsonNode json = request().body().asJson();
+        Form<PasswordResetForm> form = formFactory.form(PasswordResetForm.class).bind(json);
+
+        if (form.hasErrors()) {
+            return badRequest(form.errorsAsJson());
+        }
+
+        User foundUser = userDAO.getUserByName(form.get().userName);
+
+        try {
+            foundUser.setUserToken(UUID.randomUUID().toString());
+            userDAO.update(foundUser);
+            mailerClient.sendPasswordResetMail(foundUser);
+            String remote = request().remoteAddress();
+            Logger.info("Password reset request: " + form.get().userName + "(" + remote + ")");
+            return ok("Password reset request sent");
+        } catch (NullPointerException e) {
+            String remote = request().remoteAddress();
+            Logger.info("Password reset attempt: " + form.get().userName + "(" + remote + ")");
+            return badRequest("User does not exist");
+        }
+    }
+
+    /**
+     * Takes a token and sends the coresponding user a new random password by email. Resets the token afterwards
+     * @param token
+     * @return Result
+     * @throws EmailException
+     * @throws MalformedURLException
+     */
+    @Transactional
+    public Result confirmPasswordReset(String token) throws EmailException, MalformedURLException {
+        User foundUser = userDAO.getUserByToken(token);
+        if (foundUser == null) {
+            return badRequest("Invalid token");
+        } else {
+            //Set the password in plain text for the email sending
+            foundUser.setUserPass(PasswordHashing.getRandomString());
+            mailerClient.sendRandomPasswordMail(foundUser);
+            //Now hash the password and save it
+            foundUser.setUserToken(UUID.randomUUID().toString());
+            foundUser.setUserPass(hashPassword(foundUser.getUserPass().toCharArray()));
+            userDAO.update(foundUser);
+            return ok("Password sent via email");
+        }
     }
 }

@@ -24,6 +24,9 @@ libraryDependencies += "com.h2database" % "h2" % "1.4.196"
 libraryDependencies += "org.assertj" % "assertj-core" % "3.6.2" % Test
 libraryDependencies += "org.awaitility" % "awaitility" % "2.0.0" % Test
 
+libraryDependencies += "com.typesafe.play" %% "play-mailer" % "6.0.1"
+libraryDependencies += "com.typesafe.play" %% "play-mailer-guice" % "6.0.1"
+
 libraryDependencies += javaJpa
 libraryDependencies += "org.hibernate" % "hibernate-core" % "4.3.10.Final"
 libraryDependencies += "org.hibernate" % "hibernate-entitymanager" % "4.3.10.Final"

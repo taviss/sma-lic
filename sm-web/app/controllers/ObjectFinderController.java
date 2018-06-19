@@ -49,7 +49,10 @@ public class ObjectFinderController extends Controller {
     private ImageDAO imageDAO;
     
     @Inject
-    public ObjectFinderController(ImageUploadService imageUploadService, NetworkObjectFinderService networkObjectFinderService, ObjectRecognizer objectRecognizer) {
+    public ObjectFinderController(ImageUploadService imageUploadService, 
+            NetworkObjectFinderService networkObjectFinderService, 
+            ObjectRecognizer objectRecognizer) 
+    {
         this.imageUploadService = imageUploadService;
         this.networkObjectFinderService = networkObjectFinderService;
         this.objectRecognizer = objectRecognizer;
@@ -126,11 +129,6 @@ public class ObjectFinderController extends Controller {
                 byte[] imageBytes = byteArrayOutputStream.toByteArray();
 
                 List<Recognition> recognitions = this.objectRecognizer.identifyImage(imageBytes);
-                recognitions = recognitions.stream().filter(p -> p.getConfidence() > 0.7f).collect(Collectors.toList());
-                //FIXME
-                recognitions.sort(new ObjectFinderServiceImpl.ConfidenceComparator().reversed());
-                
-                
                 return ok(Json.toJson(recognitions));
             } catch (IOException e) {
                 return ok("No object found!");
