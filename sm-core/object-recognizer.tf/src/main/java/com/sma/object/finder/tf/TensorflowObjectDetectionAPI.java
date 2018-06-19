@@ -5,7 +5,11 @@ import com.sma.object.recognizer.api.Recognition;
 import org.tensorflow.*;
 import org.tensorflow.types.UInt8;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
@@ -96,51 +100,15 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
 
     private TensorflowObjectDetectionAPI() {}
 
-    private static Tensor<UInt8> constructAndExecuteGraphToNormalizeImage(byte[] imageBytes) {
-        try (Graph g = new Graph()) {
-            TensorflowImageClassifier.GraphBuilder b = new TensorflowImageClassifier.GraphBuilder(g);
-            // Some constants specific to the pre-trained model at:
-            // https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip
-            //
-            // - The model was trained with images scaled to 224x224 pixels.
-            // - The colors, represented as R, G, B in 1-byte each were converted to
-            //   float using (value - Mean)/Scale.
-            final int H = 224;
-            final int W = 224;
-            final float mean = 117f;
-            final float scale = 1f;
-
-            // Since the graph is being constructed once per execution here, we can use a constant for the
-            // input image. If the graph were to be re-used for multiple input images, a placeholder would
-            // have been more appropriate.
-            final Output<String> input = b.constant("input", imageBytes);
-            final Output<UInt8> output =
-                                            b.expandDims(
-                                                    b.cast(b.decodeJpeg(input, 3), UInt8.class),
-                                                    b.constant("make_batch", 0));
-            try (Session s = new Session(g)) {
-                return s.runner().fetch(output.op().name()).run().get(0).expect(UInt8.class);
-            }
-        }
-    }
-
     @Override
     public List<Recognition> identifyImage(byte[] imageBytes) {
+        try {
 
-        //FIXME
-        /*
-        for (int i = 0; i < imageBytes.length; ++i) {
-            byteValues[i * 3 + 2] = (byte) (imageBytes[i] & 0xFF);
-            byteValues[i * 3 + 1] = (byte) ((imageBytes[i] >> 8) & 0xFF);
-            byteValues[i * 3 + 0] = (byte) ((imageBytes[i] >> 16) & 0xFF);
+            Tensor<UInt8> image = constructAndExecuteGraphToNormalizeImage(imageBytes);
+            inferenceInterface.addFeed(inputName, image);
+        } catch(IOException e) {
+            return new ArrayList<>();
         }
-        
-        byteValues = imageBytes;*/
-
-        //inferenceInterface.feed(inputName, byteValues, 1, inputSize, inputSize, 3);
-        
-        Tensor<UInt8> image = constructAndExecuteGraphToNormalizeImage(imageBytes);
-        inferenceInterface.addFeed(inputName, image);
 
         // Run the inference call.
         inferenceInterface.run(outputNames, logStats);
@@ -178,5 +146,30 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
             recognitions.add(pq.poll());
         }
         return recognitions;
+    }
+
+    private static void bgr2rgb(byte[] data) {
+        for (int i = 0; i < data.length; i += 3) {
+            byte tmp = data[i];
+            data[i] = data[i + 2];
+            data[i + 2] = tmp;
+        }
+    }
+
+    private static Tensor<UInt8> constructAndExecuteGraphToNormalizeImage(byte[] image) throws IOException {
+        BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
+        if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
+            throw new IOException(
+                    String.format(
+                            "Expected 3-byte BGR encoding in BufferedImage, found %d (file: %s). This code could be made more robust",
+                            img.getType(), "TBA"));
+        }
+        byte[] data = ((DataBufferByte) img.getData().getDataBuffer()).getData();
+        // ImageIO.read seems to produce BGR-encoded images, but the model expects RGB.
+        bgr2rgb(data);
+        final long BATCH_SIZE = 1;
+        final long CHANNELS = 3;
+        long[] shape = new long[] {BATCH_SIZE, img.getHeight(), img.getWidth(), CHANNELS};
+        return Tensor.create(UInt8.class, shape, ByteBuffer.wrap(data));
     }
 }
