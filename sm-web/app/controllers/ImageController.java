@@ -51,14 +51,12 @@ public class ImageController extends Controller {
         
         if (imageFile != null) {
             User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
+            Image image = imageDAO.create(uploadedImage);
+            image.setOwner(foundUser);
             
-            boolean uploadSuccess = imageUploadService.uploadImage(uploadedImage, imageFile.getFilename(), imageFile.getContentType(), imageFile.getFile(), foundUser);
+            boolean uploadSuccess = imageUploadService.uploadImage(image, imageFile.getFilename(), imageFile.getContentType(), imageFile.getFile(), foundUser);
             
             if(uploadSuccess) {
-                
-                uploadedImage.setOwner(foundUser);
-                Image image = imageDAO.create(uploadedImage);
-                
                 return ok(Json.toJson(image));
             } else {
                 return badRequest("Error while uploading");

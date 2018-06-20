@@ -29,7 +29,7 @@ public class ImageUploadService {
             String uploadedImagePath = uploadPath + owner.getId();
             new File(uploadedImagePath).mkdirs();
             
-            uploadedImagePath += "/" + fileName;
+            uploadedImagePath += "/" + image.getId() + fileName;
             
             try {
                 Files.copy(file.toPath(), new File(uploadedImagePath).toPath(), REPLACE_EXISTING);
