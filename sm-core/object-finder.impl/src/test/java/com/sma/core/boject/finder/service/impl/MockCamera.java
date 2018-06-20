@@ -1,3 +1,5 @@
+package com.sma.core.boject.finder.service.impl;
+
 import com.sma.core.camera.api.Camera;
 
 public class MockCamera implements Camera {

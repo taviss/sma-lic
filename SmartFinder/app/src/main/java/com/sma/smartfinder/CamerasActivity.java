@@ -50,6 +50,7 @@ public class CamerasActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(CamerasActivity.this, AddCameraActivity.class));
+                finish();
             }
         });
 

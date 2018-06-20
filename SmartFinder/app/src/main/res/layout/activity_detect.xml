@@ -36,8 +36,7 @@
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="100dp"
         android:text="@string/toggle_camera"
-        android:textAllCaps="false"
-        android:textColor="@android:color/black" />
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnDetectObject"
@@ -46,8 +45,7 @@
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="50dp"
         android:text="@string/detect_object"
-        android:textAllCaps="false"
-        android:textColor="@android:color/black" />
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnAcceptObject"
@@ -56,7 +54,6 @@
         android:layout_gravity="bottom|center"
         android:text="@string/accept_object"
         android:textAllCaps="false"
-        android:textColor="@android:color/black"
         android:visibility="gone" />
 
 </FrameLayout>

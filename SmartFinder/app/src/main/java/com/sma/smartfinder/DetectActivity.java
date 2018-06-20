@@ -1,5 +1,6 @@
 package com.sma.smartfinder;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.Pair;
@@ -33,6 +35,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import sma.com.smartfinder.R;
+
+import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 public class DetectActivity extends BaseActivity {
 
@@ -125,5 +129,20 @@ public class DetectActivity extends BaseActivity {
                 btnDetectObject.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        int i = 0;
+        for(String permission : permissions) {
+            if(permission.equals(Manifest.permission.CAMERA) || permission.equals(Manifest.permission.CAPTURE_AUDIO_OUTPUT)) {
+                if(grantResults[i] == PERMISSION_DENIED) {
+                    finish();
+                    break;
+                }
+            }
+            i++;
+        }
     }
 }

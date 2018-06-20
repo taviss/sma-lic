@@ -167,7 +167,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                             startActivity(new Intent(MainActivity.this, DetectActivity.class));
                             return true;
 
-                        case R.id.action_remove:
+                        case R.id.action_cameras:
+                            startActivity(new Intent(MainActivity.this, CamerasActivity.class));
                             return true;
 
                         default:
@@ -230,12 +231,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                 startActivity(new Intent(this, DetectActivity.class));
                 return true;
 
-            case R.id.action_remove:
-                /*
-                int rows = getContentResolver().delete(StatusContract.CONTENT_URI, null, null);
-                Toast.makeText(this, "Deleted " + rows + " rows",
-                        Toast.LENGTH_LONG).show();
-                        */
+            case R.id.action_cameras:
+                startActivity(new Intent(MainActivity.this, CamerasActivity.class));
                 return true;
 
             default:

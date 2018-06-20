@@ -8,6 +8,9 @@ import org.junit.Test;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 
 public class TestTFMultibox {
@@ -17,19 +20,25 @@ public class TestTFMultibox {
     private static final String MB_INPUT_NAME = "ResizeBilinear";
     private static final String MB_OUTPUT_LOCATIONS_NAME = "output_locations/Reshape";
     private static final String MB_OUTPUT_SCORES_NAME = "output_scores/Reshape";
-    private static final String MB_MODEL_FILE = "D:/Facultate/LIC_SMA/sma-lic/sm-core/object-recognizer.tf/src/main/resources/ssd_mobilenet_v1_android_export.pb";
+    private static final String MB_MODEL_FILE = "ssd_mobilenet_v1_android_export.pb";
     private static final String MB_LOCATION_FILE =
-            "D:/Facultate/LIC_SMA/sma-lic/sm-core/object-recognizer.tf/src/main/resources/coco_labels_list.txt";
+            "coco_labels_list.txt";
     
     @Test
     public void testMB() throws Exception {
         BufferedImage bufferedImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puppy_224.jpg"));
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "jpeg", byteArrayOutputStream);
+
+        URL model = getClass().getClassLoader().getResource(MB_MODEL_FILE);
+        File modelFile = new File(model.toURI());
+
+        URL labels = getClass().getClassLoader().getResource(MB_LOCATION_FILE);
+        File labelsFile = new File(labels.toURI());
         
         ObjectRecognizer tensorflowMultibox = TensorflowObjectDetectionAPI.create(
-                MB_MODEL_FILE,
-                MB_LOCATION_FILE,
+                modelFile.getAbsolutePath(),
+                labelsFile.getAbsolutePath(),
                 300
                 );
         tensorflowMultibox.identifyImage(byteArrayOutputStream.toByteArray());
@@ -41,9 +50,15 @@ public class TestTFMultibox {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "jpeg", byteArrayOutputStream);
 
+        URL model = getClass().getClassLoader().getResource(MB_MODEL_FILE);
+        File modelFile = new File(model.toURI());
+
+        URL labels = getClass().getClassLoader().getResource(MB_LOCATION_FILE);
+        File labelsFile = new File(labels.toURI());
+
         ObjectRecognizer tensorflowMultibox = TensorflowObjectDetectionAPI.create(
-                MB_MODEL_FILE,
-                MB_LOCATION_FILE,
+                modelFile.getAbsolutePath(),
+                labelsFile.getAbsolutePath(),
                 300
         );
 

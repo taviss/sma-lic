@@ -55,6 +55,7 @@ public class AddCameraActivity extends BaseActivity{
                         if (loggedIn.get()) {
                             Future<byte[]> addCamera = HTTPUtility.addCamera(smartFinderApplication.getCameraAddress() + "/cameras", cameraAddress.getText().toString());
                             handleResponse(new String(addCamera.get()));
+                            finish();
                         } else {
                             Toast.makeText(getApplicationContext(), "Login failed!", Toast.LENGTH_LONG).show();
                         }
@@ -83,7 +84,6 @@ public class AddCameraActivity extends BaseActivity{
                 db.insert(CameraContract.CameraEntry.TABLE_NAME, null, values);
 
                 startActivity(new Intent(AddCameraActivity.this, CamerasActivity.class));
-                finish();
             } catch (JSONException e) {
                 Log.i(TAG, e.getMessage());
             }

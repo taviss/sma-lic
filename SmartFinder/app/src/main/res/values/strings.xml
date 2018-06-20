@@ -6,7 +6,7 @@
 
     <string name="settings_title">Settings</string>
     <string name="action_detect_title">Detect new</string>
-    <string name="action_remove_title">Delete object</string>
+    <string name="action_cameras_title">Cameras</string>
 
     <string name="username">Username</string>
     <string name="password">Password</string>

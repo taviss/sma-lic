@@ -115,12 +115,23 @@ public class LoginActivity extends BaseActivity {
                         SmartFinderApplicationHolder.getApplication().updateLoginDetails();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     } else {
-                        progressDialog.hide();
-                        Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
                     }
                 } catch(JSONException|IOException|InterruptedException|ExecutionException e) {
-                    progressDialog.hide();
-                    Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
         }).start();

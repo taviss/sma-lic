@@ -17,7 +17,13 @@ public abstract class AbstractRecognitionInterpreter {
     public void setNext(AbstractRecognitionInterpreter recognitionInterpreter) {
         this.nextInterpreter = recognitionInterpreter;
     }
-    
+
+    /**
+     * Go through the list of interpreters and add results
+     * @param cameraRecognitions
+     * @param imageRecognitions
+     * @return
+     */
     public List<Recognition> interpret(List<Recognition> cameraRecognitions, Recognition imageRecognitions) {
         List<Recognition> recognitions = new ArrayList<Recognition>();
         for(Recognition recognition : interpretRecognitions(cameraRecognitions, imageRecognitions)) {
@@ -34,6 +40,12 @@ public abstract class AbstractRecognitionInterpreter {
         }
         return recognitions;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     * @param cameraRecognitions
+     * @param imageRecognition
+     * @return
+     */
     abstract protected  List<Recognition> interpretRecognitions(List<Recognition> cameraRecognitions, Recognition imageRecognition);
 }

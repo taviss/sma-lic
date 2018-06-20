@@ -11,8 +11,8 @@
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/action_detect_title" />
     <item
-        android:id="@+id/action_remove"
+        android:id="@+id/action_cameras"
         android:enabled="true"
-        android:icon="@android:drawable/ic_menu_rotate"
-        android:title="@string/action_remove_title" />
+        android:icon="@android:drawable/ic_menu_camera"
+        android:title="@string/action_cameras_title" />
 </menu>

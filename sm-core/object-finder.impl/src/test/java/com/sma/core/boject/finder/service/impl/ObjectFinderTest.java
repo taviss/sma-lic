@@ -1,3 +1,5 @@
+package com.sma.core.boject.finder.service.impl;
+
 import com.sma.core.object.finder.service.impl.ObjectFinderServiceImpl;
 import com.sma.object.recognizer.api.ObjectRecognizer;
 import com.sma.object.recognizer.api.Recognition;
