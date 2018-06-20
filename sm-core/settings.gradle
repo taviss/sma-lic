@@ -9,4 +9,6 @@ include 'object-finder.api'
 include 'object-finder.impl'
 include 'object-recognizer.api'
 include 'object-recognizer.tf'
+include 'recognition-comparator.api'
+include 'recognition-comparator.impl'
 

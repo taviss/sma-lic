@@ -83,8 +83,7 @@ public class AddCameraActivity extends BaseActivity{
                 db.insert(CameraContract.CameraEntry.TABLE_NAME, null, values);
 
                 startActivity(new Intent(AddCameraActivity.this, CamerasActivity.class));
-
-                return;
+                finish();
             } catch (JSONException e) {
                 Log.i(TAG, e.getMessage());
             }

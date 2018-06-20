@@ -92,6 +92,7 @@ public class ChangePasswordActivity extends BaseActivity {
                         SmartFinderApplicationHolder.getApplication().updateLoginDetails();
                         startActivity(new Intent(ChangePasswordActivity.this, MainActivity.class));
                         Toast.makeText(getApplicationContext(), "Password change successful!", Toast.LENGTH_LONG).show();
+                        finish();
                     } else {
                         String errorString = "";
                         for (String key : errors.keySet()) {

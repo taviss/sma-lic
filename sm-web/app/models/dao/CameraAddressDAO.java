@@ -23,12 +23,12 @@ public class CameraAddressDAO {
         return wrap(em -> update(em, cameraAddress));
     }
 
-    public void delete(CameraAddress cameraAddress) {
+    public void delete(Long cameraAddressId) {
         //FIXME
         jpaApi.withTransaction(new Runnable() {
             @Override
             public void run() {
-                delete(jpaApi.em(), cameraAddress);
+                delete(jpaApi.em(), cameraAddressId);
             }
         });
     }
@@ -57,7 +57,8 @@ public class CameraAddressDAO {
         return em.merge(cameraAddress);
     }
 
-    public void delete(EntityManager em, CameraAddress cameraAddress) {
+    public void delete(EntityManager em, Long cameraAddressId) {
+        CameraAddress cameraAddress = em.find(CameraAddress.class, cameraAddressId);
         em.remove(cameraAddress);
     }
 

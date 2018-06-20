@@ -42,13 +42,20 @@ public class ObjectProvider extends ContentProvider {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(ObjectContract.TABLE);
 
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor;
+
         switch(sURIMatcher.match(uri)) {
             case ObjectContract.STATUS_DIR:
+                cursor = db.rawQuery("SELECT * FROM " + ObjectContract.TABLE, null);
+                //Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
                 break;
             case ObjectContract.STATUS_ITEM:
                 if(selection == null) {
                     qb.appendWhere(ObjectContract.Column.ID + "=" + uri.getLastPathSegment());
                 }
+                cursor = db.rawQuery("SELECT * FROM " + ObjectContract.TABLE + " WHERE " + ObjectContract.Column.ID + "=" + uri.getLastPathSegment(), null);
+                //Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
                 break;
 
             default:
@@ -56,9 +63,6 @@ public class ObjectProvider extends ContentProvider {
         }
 
         String orderBy = (TextUtils.isEmpty(sortOrder)) ? ObjectContract.DEFAULT_SORT : sortOrder;
-
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 

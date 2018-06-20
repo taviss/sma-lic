@@ -80,11 +80,12 @@ public class RegisterActivity extends BaseActivity {
                 preferences.edit().putString("username", user).apply();
                 preferences.edit().putString("password", pass).apply();
                 preferences.edit().putString("camera_server_address", address).apply();
+                SmartFinderApplicationHolder.getApplication().updateLoginDetails();
                 Log.i("TEST", "Registered in successfuly!");
                 startActivity(new Intent(RegisterActivity.this, MainActivity.class));
             } else {
                 progressDialog.hide();
-                Toast.makeText(getApplicationContext(), "Registration failed! Please try again!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Username or email in use!", Toast.LENGTH_LONG).show();
             }
         } catch(JSONException |IOException |InterruptedException|ExecutionException e) {
             progressDialog.hide();

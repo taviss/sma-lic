@@ -4,35 +4,75 @@ import com.sma.core.camera.api.Camera;
 import com.sma.core.object.finder.service.api.ObjectFinderService;
 import com.sma.object.recognizer.api.ObjectRecognizer;
 import com.sma.object.recognizer.api.Recognition;
+import com.sma.recognition.interpreter.impl.InterpretationBootstrap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * {@inheritDoc}
+ */
 public class ObjectFinderServiceImpl implements ObjectFinderService{
-    private List<Camera> cameraNetwork;
-    private ObjectRecognizer objectRecognizer;
-    private ObjectRecognizer imageClassifier;
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectFinderServiceImpl.class);
     
+    /**
+     * The list of cameras this {@link ObjectFinderService} has access to
+     */
+    private List<Camera> cameraNetwork;
+
+    /**
+     * The {@link ObjectRecognizer} used for identifying objects in the {@link Camera} snapshot
+     */
+    private ObjectRecognizer objectRecognizer;
+
+    /**
+     * The {@link ObjectRecognizer} used for identifying objects in the given image
+     */
+    private ObjectRecognizer imageClassifier;
+
+    /**
+     * Minimum confidence for recognized objects
+     */
     private static final float MINIMUM_CONFIDENCE = 0.7f;
 
     public ObjectFinderServiceImpl() {
         this.cameraNetwork = new ArrayList<>();
     }
 
+    /**
+     * {@inheritDoc}
+     * @param camera
+     */
     public void addCamera(Camera camera) {
         this.cameraNetwork.add(camera);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param objectRecognizer
+     */
     public void bindObjectRecoginzer(ObjectRecognizer objectRecognizer) {
         this.objectRecognizer = objectRecognizer;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     * @param objectRecognizer
+     */
     public void bindImageClassifier(ObjectRecognizer objectRecognizer) {
         this.imageClassifier = objectRecognizer;
     }
 
+    /**
+     * {@inheritDoc}
+     * @param imageBytes
+     * @return
+     */
     public List<Recognition> findObject(byte[] imageBytes) {
+        LOG.debug("findObject()");
         List<Recognition> globalRecognitions = new ArrayList<>();
         
         float bestGlobalConfidence = 0.0f;
@@ -44,20 +84,17 @@ public class ObjectFinderServiceImpl implements ObjectFinderService{
             List<Recognition> results = objectRecognizer.identifyImage(cameraSnapshot);
             List<Recognition> imageIdentification = imageClassifier.identifyImage(imageBytes);
             imageIdentification.sort(new ConfidenceComparator().reversed());
+
+            List<Recognition> interpreted = InterpretationBootstrap.getInterpreter().interpret(results, imageIdentification.get(0));
             
             //TODO Add box
-            for(Recognition recognition : results) {
-                if(recognition.getConfidence() < MINIMUM_CONFIDENCE)
-                    continue;
-                
-                if(recognition.getTitle().equals(imageIdentification.get(0).getTitle())) {
-                    if(bestGlobalConfidence < recognition.getConfidence()) {
-                        bestGlobalConfidence = recognition.getConfidence();
-                        bestMatch = recognition;
-                        globalRecognitions.clear();
-                    } else if (bestGlobalConfidence == recognition.getConfidence()) {
-                        globalRecognitions.add(recognition);
-                    }
+            for(Recognition recognition : interpreted) {
+                if(bestGlobalConfidence < recognition.getConfidence()) {
+                    bestGlobalConfidence = recognition.getConfidence();
+                    bestMatch = recognition;
+                    globalRecognitions.clear();
+                } else if (bestGlobalConfidence == recognition.getConfidence()) {
+                    globalRecognitions.add(recognition);
                 }
             }
         }

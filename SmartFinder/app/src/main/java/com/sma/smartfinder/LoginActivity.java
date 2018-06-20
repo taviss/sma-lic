@@ -32,8 +32,6 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         final SmartFinderApplication smartFinderApplication = SmartFinderApplicationHolder.getApplication();
         final String user = smartFinderApplication.getUser();
         final String pass = smartFinderApplication.getPass();
@@ -44,6 +42,7 @@ public class LoginActivity extends BaseActivity {
             tryLogin(address, user, pass);
         }
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         userText = findViewById(R.id.login_user);
@@ -95,31 +94,37 @@ public class LoginActivity extends BaseActivity {
         moveTaskToBack(true);
     }
 
-    public void tryLogin(String address, String user, String pass) {
+    public void tryLogin(final String address, final String user, final String pass) {
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        try {
-            progressDialog.show();
-            Future<Boolean> loggedIn = HTTPUtility.login(address + "/login/submit", "userName", user, "userPass", pass);
-            if (loggedIn.get()) {
-                progressDialog.dismiss();
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                preferences.edit().putString("username", user).apply();
-                preferences.edit().putString("password", pass).apply();
-                preferences.edit().putString("camera_server_address", address).apply();
-                SmartFinderApplicationHolder.getApplication().updateLoginDetails();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            } else {
-                progressDialog.hide();
-                Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    progressDialog.show();
+                    Future<Boolean> loggedIn = HTTPUtility.login(address + "/login/submit", "userName", user, "userPass", pass);
+                    if (loggedIn.get()) {
+                        progressDialog.dismiss();
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        preferences.edit().putString("username", user).apply();
+                        preferences.edit().putString("password", pass).apply();
+                        preferences.edit().putString("camera_server_address", address).apply();
+                        SmartFinderApplicationHolder.getApplication().updateLoginDetails();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    } else {
+                        progressDialog.hide();
+                        Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+                    }
+                } catch(JSONException|IOException|InterruptedException|ExecutionException e) {
+                    progressDialog.hide();
+                    Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
+                }
             }
-        } catch(JSONException|IOException|InterruptedException|ExecutionException e) {
-            progressDialog.hide();
-            Toast.makeText(getApplicationContext(), "Login failed! Please try again!", Toast.LENGTH_LONG).show();
-        }
+        }).start();
+
     }
 
     public boolean validate(String user, String password) {

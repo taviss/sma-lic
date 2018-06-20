@@ -12,6 +12,10 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 
+/**
+ * Tensorflow implementation for the {@link ObjectRecognizer}
+ * This implementation was copied from the official Tensorflow repository and slightly modified
+ */
 public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
     
     // Only return this many results.

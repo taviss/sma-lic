@@ -410,6 +410,57 @@ public class HTTPUtility {
 
     }
 
+    public static Future<Boolean> deleteCamera(final String urlString, final String id) throws JSONException, IOException {
+
+        return executors.submit(
+                new Callable<Boolean>() {
+
+                    @Override
+                    public Boolean call() throws Exception {
+                        HttpURLConnection httpUrlConnection = null;
+                        URL url = new URL("http://" + urlString + "/" + id);
+                        httpUrlConnection = (HttpURLConnection) url.openConnection();
+                        httpUrlConnection.setUseCaches(false);
+                        httpUrlConnection.setDoOutput(true);
+
+                        if (cookieManager.getCookieStore().getCookies().size() > 0) {
+                            httpUrlConnection.setRequestProperty("Cookie",
+                                    TextUtils.join(";",  cookieManager.getCookieStore().getCookies()));
+                        }
+
+                        httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+                        httpUrlConnection.setRequestProperty("Accept", "application/json");
+                        httpUrlConnection.setRequestMethod("DELETE");
+                        httpUrlConnection.setRequestProperty("Connection", "Keep-Alive");
+                        httpUrlConnection.setRequestProperty("Cache-Control", "no-cache");
+
+                    /*
+                    String string = "";
+                    string = string.concat(userField).concat("=").concat(user).concat("&");
+                    string = string.concat(passwordField).concat("=").concat(password);*/
+
+                        JSONObject jsonObject = new JSONObject();
+
+                        DataOutputStream request = new DataOutputStream(
+                                httpUrlConnection.getOutputStream());
+                        //request.write(string.getBytes("UTF-8"));
+
+                        request.write(jsonObject.toString().getBytes("UTF-8"));
+
+                        request.flush();
+                        request.close();
+                        int responseCode = httpUrlConnection.getResponseCode();
+
+                        if(responseCode == HttpURLConnection.HTTP_BAD_REQUEST
+                                || responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+
+    }
+
 
     public static Future<byte[]> postImage(String urlString, Bitmap bitmap) throws IOException {
         return postImage(urlString, bitmap, new HashMap<String, String>());

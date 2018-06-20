@@ -15,7 +15,7 @@ public class CameraDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + CameraContract.CameraEntry.TABLE_NAME + " (" +
                     CameraContract.CameraEntry._ID + " INTEGER PRIMARY KEY," +
-                    CameraContract.CameraEntry.COLUMN_NAME_ADDRESS + " TEXT" +
+                    CameraContract.CameraEntry.COLUMN_NAME_ADDRESS + " TEXT," +
                     CameraContract.CameraEntry.COLUMN_NAME_OWNER + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =

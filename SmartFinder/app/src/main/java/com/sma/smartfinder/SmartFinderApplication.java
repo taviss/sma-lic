@@ -28,7 +28,8 @@ public class SmartFinderApplication extends Application {
 
     private static final String TAG = SmartFinderApplication.class.getName();
 
-    private static final String DEFAULT_ADDRESS = "108.61.188.44";
+    //private static final String DEFAULT_ADDRESS = "108.61.188.44";
+    private static final String DEFAULT_ADDRESS = "10.0.2.2:9000";
 
     private String user;
     private String pass;

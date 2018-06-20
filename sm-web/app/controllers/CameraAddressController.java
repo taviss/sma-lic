@@ -62,7 +62,7 @@ public class CameraAddressController extends Controller {
         } else {
             User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
             if(cameraAddress.getOwner().getId().equals(foundUser.getId())) {
-                cameraAddressDAO.delete(cameraAddress);
+                cameraAddressDAO.delete(cameraAddress.getId());
                 return ok("Product deleted: " + cameraAddress.getAddress());
             } else {
                 return forbidden("You're not the owner of this camera!");

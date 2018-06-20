@@ -55,6 +55,7 @@ public class TestTFMultibox {
         }
 
 
+        /*
         System.out.println("OpenCV recognitions:");
 
         OpenCVCamera openCVCamera = new OpenCVCamera("1", "http://192.168.137.1:8080/live?dummy=x.mjpg");
@@ -63,7 +64,7 @@ public class TestTFMultibox {
         List<Recognition> recognitionsO = tensorflowMultibox.identifyImage(opencvImage);
         for(Recognition recognition : recognitionsO) {
             System.out.println(recognition.getTitle() + " : " + recognition.getConfidence());
-        }
+        }*/
 
     }
 }
