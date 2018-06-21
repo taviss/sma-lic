@@ -4,6 +4,8 @@ import android.app.Application;
 
 /**
  * Created by octavian.salcianu on 3/22/2018.
+ *
+ * Helper class that holds the app reference
  */
 
 public class SmartFinderApplicationHolder {

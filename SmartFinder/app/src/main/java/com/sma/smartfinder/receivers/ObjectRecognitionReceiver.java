@@ -13,6 +13,8 @@ import com.sma.smartfinder.SmartFinderApplication;
 
 /**
  * Created by octavian.salcianu on 1/11/2018.
+ *
+ * Broadcast receiver for object recognition
  */
 
 public class ObjectRecognitionReceiver extends BroadcastReceiver {
@@ -20,6 +22,8 @@ public class ObjectRecognitionReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        // Sends a message and possibly starts the activity for object recognition if in foreground
+        // If the app is in the background, creates a notification
         if(((SmartFinderApplication) context.getApplicationContext()).isInForeground()) {
             if (intent.getAction().equals("com.sma.smartfinder.action.OBJECT_NOT_RECOGNIZED")) {
                 Toast.makeText(context, "Object could not be found using the camera server", Toast.LENGTH_LONG).show();

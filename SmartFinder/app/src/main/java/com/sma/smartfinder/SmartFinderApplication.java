@@ -9,6 +9,8 @@ import android.util.Log;
 
 /**
  * Created by octavian.salcianu on 1/11/2018.
+ *
+ * Application - holds relevant information about the current session
  */
 
 public class SmartFinderApplication extends Application {
@@ -31,9 +33,25 @@ public class SmartFinderApplication extends Application {
     //private static final String DEFAULT_ADDRESS = "108.61.188.44";
     private static final String DEFAULT_ADDRESS = "10.0.2.2:9000";
 
+    /**
+     * The current logged in user
+     */
     private String user;
+
+    /**
+     * The current password
+     */
     private String pass;
+
+    /**
+     * The current address for the main server
+     */
+    //TODO This should not be a variable, innit?
     private String cameraAddress;
+
+    /**
+     * Flag to know weather a login will be attempted
+     */
     private boolean tryLogin = true;
 
     @Override
@@ -44,22 +62,41 @@ public class SmartFinderApplication extends Application {
         updateLoginDetails();
     }
 
+    /**
+     * Returns current user
+     * @return
+     */
     public String getUser() {
         return this.user;
     }
 
+    /**
+     * Returns user's pass
+     * @return
+     */
     public String getPass() {
         return this.pass;
     }
 
+    /**
+     * Returns address
+     * @return
+     */
     public String getCameraAddress() {
         return this.cameraAddress;
     }
 
+    /**
+     * Temporarily disables logging in
+     */
     public void disableLogin() {
         this.tryLogin = false;
     }
 
+    /**
+     * Checks if logging in is disabled and resets the flag in the process
+     * @return
+     */
     public boolean tryLogin() {
         boolean ret = tryLogin;
         if(!ret)
@@ -68,6 +105,9 @@ public class SmartFinderApplication extends Application {
         return ret;
     }
 
+    /**
+     * Updates user information
+     */
     public void updateLoginDetails() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 

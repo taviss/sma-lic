@@ -31,14 +31,38 @@ import java.util.Date;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Fragment for displaying information about a recognized object
+ */
 public class DetailsFragment extends Fragment {
+    /**
+     * Name and created at
+     */
     private TextView textName, textCreatedAt;
+
+    /**
+     * The image of the object
+     */
     private ImageView objectView;
+
+    /**
+     * Button for localization
+     */
     private Button btnLocate;
+
+    /**
+     * Button for deletion
+     */
     private Button btnDelete;
 
+    /**
+     * Current displayed image
+     */
     private Bitmap currentImage;
 
+    /**
+     * Current id
+     */
     private int currentId;
 
     @Nullable
@@ -53,6 +77,7 @@ public class DetailsFragment extends Fragment {
         btnDelete = (Button) view.findViewById(R.id.btnDeleteObject);
 
 
+        // Send an intent to the ObjectFinderService using the id of the current image
         btnLocate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +89,7 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        // Delete an image
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,6 +112,10 @@ public class DetailsFragment extends Fragment {
         updateView(id);
     }
 
+    /**
+     * Updates the currently viewed recognized object
+     * @param id
+     */
     public void updateView(long id) {
         if(id == -1) {
             textName.setText("");

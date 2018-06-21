@@ -7,6 +7,9 @@ import android.preference.PreferenceManager;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Settings fragment
+ */
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private SharedPreferences preferences;

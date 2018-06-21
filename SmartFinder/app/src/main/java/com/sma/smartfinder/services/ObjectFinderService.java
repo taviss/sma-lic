@@ -25,6 +25,8 @@ import java.util.concurrent.Future;
 
 /**
  * Created by octavian.salcianu on 1/11/2018.
+ *
+ * Service for finding an object
  */
 
 public class ObjectFinderService extends IntentService {
@@ -38,6 +40,7 @@ public class ObjectFinderService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.i(TAG, "objectFinderService#onHandleIntent()");
 
+        // Retrieve user info
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         String user = preferences.getString("username", "");
@@ -58,9 +61,12 @@ public class ObjectFinderService extends IntentService {
             return;
         }
 
+        // Try login
         try {
             Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
             if(logged.get()) {
+                // Send a POST request and expect an image with the object's location
+                // The id of the searched for object(image) is passed as an extra
                 Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/locate", String.valueOf(intent.getIntExtra("img_id", 0)), intent.getStringExtra("name"));
                 handleResponse(response.get(), intent.getStringExtra("name"));
             } else {
@@ -83,6 +89,11 @@ public class ObjectFinderService extends IntentService {
 
     }
 
+    /**
+     * Handles the server response and notifies accordingly
+     * @param response
+     * @param name
+     */
     private void handleResponse(byte[] response, String name) {
         if(new String(response).contains("Object not found!")) {
             sendBroadcast(new Intent("com.sma.smartfinder.action.NO_OBJECT_FOUND"));

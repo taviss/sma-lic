@@ -42,7 +42,7 @@ public class ImageDAO {
     /**
      * Returns the Image with "id"
      * @param id
-     * @return User
+     * @return Image
      */
     public Image get(Long id) {
         return wrap(em -> get(em, id));
@@ -66,7 +66,7 @@ public class ImageDAO {
     /**
      * Returns the Image with "id"
      * @param id
-     * @return User
+     * @return Image
      */
     public Image get(EntityManager em, Long id) {
         return em.find(Image.class, id);

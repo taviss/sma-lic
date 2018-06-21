@@ -28,12 +28,30 @@ import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Activity for changing a user's password
+ */
 public class ChangePasswordActivity extends BaseActivity {
     private static final String TAG = ChangePasswordActivity.class.getName();
 
+    /**
+     * Old password
+     */
     private EditText oldPass;
+
+    /**
+     * New password
+     */
     private EditText newPass;
+
+    /**
+     * New password repeat
+     */
     private EditText newPassRepeat;
+
+    /**
+     * Button for changing password
+     */
     private Button changeBut;
 
     @Override
@@ -80,6 +98,10 @@ public class ChangePasswordActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Handles the response from the server and updates preferences accordingly
+     * @param response
+     */
     public void handleResponse(String response) {
         if(response != null) {
             if(!response.isEmpty()) {
@@ -117,6 +139,12 @@ public class ChangePasswordActivity extends BaseActivity {
 
     }
 
+    /**
+     * Utility to convert a JSONObject to a Map
+     * @param object
+     * @return
+     * @throws JSONException
+     */
     public static Map<String, Object> toMap(JSONObject object) throws JSONException {
         Map<String, Object> map = new HashMap<String, Object>();
 

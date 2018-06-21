@@ -10,8 +10,19 @@ import java.io.IOException;
 import java.net.URL;
 
 public class ImageCamera implements Camera {
+    /**
+     * The ID of this camera
+     */
     private String id;
+
+    /**
+     * A buffered image to get snapshot from
+     */
     private BufferedImage image;
+
+    /**
+     * The image as byte array
+     */
     private byte[] imageBytes;
 
     public ImageCamera(String id, File source) {
@@ -48,10 +59,18 @@ public class ImageCamera implements Camera {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @return
+     */
     public byte[] getSnapshot() {
         return this.imageBytes;
     }
 
+    /**
+     * {@inheritDoc}
+     * @return
+     */
     public String getId() {
         return this.id;
     }

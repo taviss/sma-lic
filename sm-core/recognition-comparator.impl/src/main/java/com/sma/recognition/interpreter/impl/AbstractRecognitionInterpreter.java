@@ -10,6 +10,9 @@ import java.util.List;
  * An abstract class that uses chain of responsability pattern to delegate recognition comparison
  */
 public abstract class AbstractRecognitionInterpreter {
+    /**
+     * Minnimum confidence to add to the list of recognitions
+     */
     public static final float MINIMUM_CONFIDENCE = 0.7f;
     
     protected AbstractRecognitionInterpreter nextInterpreter;

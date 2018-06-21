@@ -5,21 +5,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by octavian.salcianu on 6/19/2018.
+ * DB helper for cameras
  */
-
 public class CameraDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "cameras.db";
 
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + CameraContract.CameraEntry.TABLE_NAME + " (" +
-                    CameraContract.CameraEntry._ID + " INTEGER PRIMARY KEY," +
-                    CameraContract.CameraEntry.COLUMN_NAME_ADDRESS + " TEXT," +
-                    CameraContract.CameraEntry.COLUMN_NAME_OWNER + " TEXT)";
+            "CREATE TABLE " + CameraContract.Column.TABLE_NAME + " (" +
+                    CameraContract.Column._ID + " INTEGER PRIMARY KEY," +
+                    CameraContract.Column.COLUMN_NAME_ADDRESS + " TEXT," +
+                    CameraContract.Column.COLUMN_NAME_OWNER + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + CameraContract.CameraEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + CameraContract.Column.TABLE_NAME;
 
 
     public CameraDbHelper(Context context) {

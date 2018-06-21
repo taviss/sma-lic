@@ -41,6 +41,9 @@ import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Main activity - holds all the recognized objects
+ */
 public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -50,12 +53,18 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         moveTaskToBack(true);
     }
 
+    /**
+     * Convert from
+     */
     private static final String[] FROM = {
             ObjectContract.Column.OBJECT_NAME,
             ObjectContract.Column.CREATED_AT,
             ObjectContract.Column.IMG
     };
 
+    /**
+     * Convert to
+     */
     private static final int[] TO = {
             R.id.list_item_object_name,
             R.id.list_item_created_at,
@@ -75,6 +84,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         }
 
         Log.d(TAG, "onCreateLoader");
+        // Load current user's objects
         String selection = ObjectContract.Column.OWNER + "=?";
         String[] selectionArgs = { SmartFinderApplicationHolder.getApplication().getUser() };
         return new CursorLoader(this, ObjectContract.CONTENT_URI, null, selection, selectionArgs, ObjectContract.DEFAULT_SORT);
@@ -82,6 +92,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Create fragments for loaded data for details display
         DetailsFragment detailsFragment = (DetailsFragment) getFragmentManager().findFragmentById(R.id.fragment_details);
 
         if(detailsFragment != null && detailsFragment.isVisible() && data.getCount() == 0) {
@@ -103,6 +114,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 
+            // Update elements accordingly
             if(view.getId() == R.id.list_item_created_at) {
                 long timestamp = cursor.getLong(columnIndex);
                 CharSequence relativeTime = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(new Date(timestamp));
@@ -123,13 +135,10 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
-        Log.i("TEST", "MainActivity#onCreate()");
-
+        Log.d(TAG, "MainActivity#onCreate()");
 
         if(savedInstanceState == null) {
+            // Create new cursor adapter
             setContentView(R.layout.activity_main);
             mAdapter = new SimpleCursorAdapter(this, R.layout.objects_list, null, FROM, TO, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
             mAdapter.setViewBinder(new ObjectsViewBinder());
@@ -137,6 +146,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
             GridView listView = findViewById(R.id.objects_list);
             listView.setAdapter(mAdapter);
 
+            // On click, display details about the object
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -155,6 +165,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
             bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
 
+            // Navigation menu for different activities/options
             bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {

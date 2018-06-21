@@ -1,14 +1,8 @@
 package com.sma.smartfinder;
 
-import android.app.LoaderManager;
 import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,10 +23,20 @@ import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Activity for adding a camera
+ */
 public class AddCameraActivity extends BaseActivity{
     private final String TAG = AddCameraActivity.class.getName();
 
+    /**
+     * Button for adding a new camera
+     */
     private Button addCameraButton;
+
+    /**
+     * EditText for address
+     */
     private EditText cameraAddress;
 
     @Override
@@ -50,6 +54,7 @@ public class AddCameraActivity extends BaseActivity{
                     Toast.makeText(getApplicationContext(), "Address may not be empty!", Toast.LENGTH_LONG).show();
                 } else {
                     try {
+                        // Try login and try adding the camera
                         final SmartFinderApplication smartFinderApplication = SmartFinderApplicationHolder.getApplication();
                         Future<Boolean> loggedIn = HTTPUtility.login(smartFinderApplication.getCameraAddress() + "/login/submit", "userName", smartFinderApplication.getUser(), "userPass", smartFinderApplication.getPass());
                         if (loggedIn.get()) {
@@ -67,21 +72,26 @@ public class AddCameraActivity extends BaseActivity{
         });
     }
 
+    /**
+     * Handles the response from the server and updates the local database accordingly
+     * @param response
+     */
     public void handleResponse(String response) {
         if(response != null) {
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 int id = (int)jsonObject.get("id");
 
+                // Insert the new camera, using the ID provided by the server
                 ContentValues values = new ContentValues();
-                values.put(CameraContract.CameraEntry._ID, id);
-                values.put(CameraContract.CameraEntry.COLUMN_NAME_OWNER, SmartFinderApplicationHolder.getApplication().getUser());
-                values.put(CameraContract.CameraEntry.COLUMN_NAME_ADDRESS, cameraAddress.getText().toString());
+                values.put(CameraContract.Column._ID, id);
+                values.put(CameraContract.Column.COLUMN_NAME_OWNER, SmartFinderApplicationHolder.getApplication().getUser());
+                values.put(CameraContract.Column.COLUMN_NAME_ADDRESS, cameraAddress.getText().toString());
 
                 CameraDbHelper dbHelper = new CameraDbHelper(this);
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-                db.insert(CameraContract.CameraEntry.TABLE_NAME, null, values);
+                db.insert(CameraContract.Column.TABLE_NAME, null, values);
 
                 startActivity(new Intent(AddCameraActivity.this, CamerasActivity.class));
             } catch (JSONException e) {

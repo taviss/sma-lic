@@ -48,8 +48,10 @@ public class Module extends AbstractModule {
         bind(ApplicationTimer.class).asEagerSingleton();
         // Set AtomicCounter as the implementation for Counter.
         bind(Counter.class).to(AtomicCounter.class);
+        // ImageUploadService is a singleton
         bind(ImageUploadService.class).asEagerSingleton();
 
+        // Get the model from the configuration and bind to instance
         try {
             ObjectRecognizer tensorflowMultibox = TensorflowObjectDetectionAPI.create(
                     configuration.getString("tfMultiboxModelPath"),
@@ -61,7 +63,7 @@ public class Module extends AbstractModule {
             e.printStackTrace();
         }
         
-        
+        // NetworkObjectFinderService as singleton
         bind(NetworkObjectFinderService.class).asEagerSingleton();
     }
 

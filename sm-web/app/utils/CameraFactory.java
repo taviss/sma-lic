@@ -8,6 +8,9 @@ import models.CameraAddress;
 
 import java.io.File;
 
+/**
+ * Factory for creating a {@link Camera} from the {@link CameraAddress}
+ */
 public class CameraFactory {
     
     public static Camera createCamera(CameraAddress cameraAddress) {

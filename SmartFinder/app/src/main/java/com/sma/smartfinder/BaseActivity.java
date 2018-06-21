@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by octavian.salcianu on 1/11/2018.
+ *
+ * A base activity for shared logic
  */
 
 public class BaseActivity extends Activity {

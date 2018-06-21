@@ -3,6 +3,9 @@ package com.sma.smartfinder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+/**
+ * Activity for details about an object
+ */
 public class DetailsActivity extends BaseActivity {
 
     @Override

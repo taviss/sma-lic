@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,11 +29,33 @@ import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Activity for listing all the cameras for the logged in user
+ */
 public class CamerasActivity extends BaseActivity {
+    /**
+     * Button for adding a new camera
+     */
     private Button addCamera;
+
+    /**
+     * The list of cameras
+     */
     private ListView camerasList;
+
+    /**
+     * Current tapped camera
+     */
     private String currentSelection;
+
+    /**
+     * An adapter to display camera addresses as a list
+     */
     private CameraAdapter adapter;
+
+    /**
+     * Current tapped camera ID
+     */
     private int currentId;
 
     @Override
@@ -54,6 +74,7 @@ public class CamerasActivity extends BaseActivity {
             }
         });
 
+        // Dialog for deleting a camera
         final AlertDialog.Builder builder = new AlertDialog.Builder(CamerasActivity.this);
 
 
@@ -64,11 +85,14 @@ public class CamerasActivity extends BaseActivity {
                     case DialogInterface.BUTTON_POSITIVE: {
                         final SmartFinderApplication smartFinderApplication = SmartFinderApplicationHolder.getApplication();
                         try {
+                            // Send DELETE HTTP and delete from local database if successful
                             Future<Boolean> delete = HTTPUtility.deleteCamera(smartFinderApplication.getCameraAddress() + "/cameras", String.valueOf(currentId));
                             if(delete.get()) {
                                 CameraDbHelper dbHelper = new CameraDbHelper(CamerasActivity.this);
                                 SQLiteDatabase db = dbHelper.getWritableDatabase();
-                                db.delete(CameraContract.CameraEntry.TABLE_NAME, CameraContract.CameraEntry._ID + "=" + currentId, null);
+                                db.delete(CameraContract.Column.TABLE_NAME, CameraContract.Column._ID + "=" + currentId, null);
+
+                                // Update the cursor so changes are reflected in the list
                                 Cursor cameraCursor = db.rawQuery("SELECT * FROM camera WHERE owner='" + SmartFinderApplicationHolder.getApplication().getUser() + "'" , null);
                                 adapter.swapCursor(cameraCursor);
                                 adapter.notifyDataSetChanged();
@@ -90,19 +114,21 @@ public class CamerasActivity extends BaseActivity {
                 Cursor cursor = (Cursor) adapter.getItem(i);
                 cursor.moveToPosition(i);
 
-                currentSelection = (String) cursor.getString(cursor.getColumnIndexOrThrow(CameraContract.CameraEntry.COLUMN_NAME_ADDRESS));
-                currentId = (int) cursor.getInt(cursor.getColumnIndexOrThrow(CameraContract.CameraEntry._ID));
+                // Get the current selection
+                currentSelection = (String) cursor.getString(cursor.getColumnIndexOrThrow(CameraContract.Column.COLUMN_NAME_ADDRESS));
+                currentId = (int) cursor.getInt(cursor.getColumnIndexOrThrow(CameraContract.Column._ID));
 
                 builder.setMessage("Delete camera?").setPositiveButton("Yes", dialogClickListener)
                             .setNegativeButton("No", dialogClickListener).show();
             }
         });
 
+        // Create a cursor for all the cameras of this current user
         CameraDbHelper handler = new CameraDbHelper(this);
         SQLiteDatabase db = handler.getWritableDatabase();
         Cursor cameraCursor = db.rawQuery("SELECT * FROM camera WHERE owner='" + SmartFinderApplicationHolder.getApplication().getUser() + "'", null);
         //cameraCursor.moveToFirst();
-        //String address = cameraCursor.getString(cameraCursor.getColumnIndexOrThrow(CameraContract.CameraEntry.COLUMN_NAME_ADDRESS));
+        //String address = cameraCursor.getString(cameraCursor.getColumnIndexOrThrow(CameraContract.Column.COLUMN_NAME_ADDRESS));
 
         adapter = new CameraAdapter(this, cameraCursor);
         camerasList.setAdapter(adapter);
@@ -125,7 +151,7 @@ public class CamerasActivity extends BaseActivity {
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             TextView cameraId = (TextView) view.findViewById(R.id.camera_address_item);
-            String address = cursor.getString(cursor.getColumnIndexOrThrow(CameraContract.CameraEntry.COLUMN_NAME_ADDRESS));
+            String address = cursor.getString(cursor.getColumnIndexOrThrow(CameraContract.Column.COLUMN_NAME_ADDRESS));
             cameraId.setText(String.valueOf(address));
         }
     }

@@ -18,6 +18,9 @@ import services.ImageUploadService;
 import javax.inject.Inject;
 import java.io.File;
 
+/**
+ * Controller for {@link Image} related operations
+ */
 public class ImageController extends Controller {
     @Inject
     private FormFactory formFactory;
@@ -27,7 +30,10 @@ public class ImageController extends Controller {
 
     @Inject
     private ImageDAO imageDAO;
-    
+
+    /**
+     * The service for uploading an image
+     */
     private final ImageUploadService imageUploadService;
     
     @Inject
@@ -57,6 +63,7 @@ public class ImageController extends Controller {
             boolean uploadSuccess = imageUploadService.uploadImage(image, imageFile.getFilename(), imageFile.getContentType(), imageFile.getFile(), foundUser);
             
             if(uploadSuccess) {
+                imageDAO.update(image);
                 return ok(Json.toJson(image));
             } else {
                 return badRequest("Error while uploading");

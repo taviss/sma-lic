@@ -28,6 +28,8 @@ import java.util.concurrent.Future;
 
 /**
  * Created by octavian.salcianu on 3/22/2018.
+ *
+ * Service for recognizing an object
  */
 
 public class ObjectRecoginzerService  extends IntentService {
@@ -42,6 +44,7 @@ public class ObjectRecoginzerService  extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.i(TAG, "objectFinderService#onHandleIntent()");
 
+        // Retrieve user information
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         String user = preferences.getString("username", "");
@@ -62,7 +65,9 @@ public class ObjectRecoginzerService  extends IntentService {
             return;
         }
 
+
         try {
+            // Load the image using the location (saved on filesystem)
             Bitmap bmp = null;
             String filename = intent.getStringExtra("locate_image");
             try {
@@ -73,8 +78,10 @@ public class ObjectRecoginzerService  extends IntentService {
                 e.printStackTrace();
             }
 
+            // Try login
             Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
             if(logged.get()) {
+                // POST the image for recognition and handle response
                 Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/recognize", bmp);
                 handleResponse(new String(response.get()), filename);
             } else {
@@ -96,6 +103,11 @@ public class ObjectRecoginzerService  extends IntentService {
         }
     }
 
+    /**
+     * Handles the response from the server and converts JSON recognitions to an ArrayList
+     * @param response
+     * @param image
+     */
     private void handleResponse(String response, String image) {
         if(response != null) {
             try {

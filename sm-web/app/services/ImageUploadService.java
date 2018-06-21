@@ -15,12 +15,24 @@ import java.nio.file.Files;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+/**
+ * Service for uploading an image to the server
+ */
 @Singleton
 public class ImageUploadService {
     
     @Inject
     private Config config;
-    
+
+    /**
+     * Uploads an image to the server and sets main path
+     * @param image
+     * @param fileName
+     * @param contentType
+     * @param file
+     * @param owner
+     * @return
+     */
     @Transactional
     public boolean uploadImage(Image image, String fileName, String contentType, File file, User owner) {
         if (file != null && fileName != null) {
@@ -44,6 +56,14 @@ public class ImageUploadService {
         }
     }
 
+    /**
+     * Uploads an image to the server and sets last seen path
+     * @param image
+     * @param fileName
+     * @param newImage
+     * @param owner
+     * @return
+     */
     @Transactional
     public boolean uploadLastSeenImage(Image image, String fileName, byte[] newImage, User owner) {
         if (newImage != null && fileName != null) {

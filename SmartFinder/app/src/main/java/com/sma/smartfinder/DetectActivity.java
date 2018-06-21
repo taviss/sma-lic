@@ -21,9 +21,6 @@ import android.widget.Toast;
 
 import com.flurgle.camerakit.CameraListener;
 import com.flurgle.camerakit.CameraView;
-import com.sma.smartfinder.db.ObjectContract;
-import com.sma.smartfinder.object.recognition.Classifier;
-import com.sma.smartfinder.object.recognition.TensorFlowImageClassifier;
 import com.sma.smartfinder.services.ObjectRecoginzerService;
 
 import java.io.FileOutputStream;
@@ -38,6 +35,9 @@ import sma.com.smartfinder.R;
 
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
+/**
+ * Activity for recognizing a new object
+ */
 public class DetectActivity extends BaseActivity {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
@@ -45,7 +45,14 @@ public class DetectActivity extends BaseActivity {
     private static final int INPUT_SIZE = 224;
 
     private Button btnDetectObject, btnToggleCamera;
+    /**
+     * The captured image
+     */
     private ImageView imageViewResult;
+
+    /**
+     * View for camera
+     */
     private CameraView cameraView;
 
     @Override
@@ -58,6 +65,7 @@ public class DetectActivity extends BaseActivity {
         btnToggleCamera = (Button) findViewById(R.id.btnToggleCamera);
         btnDetectObject = (Button) findViewById(R.id.btnDetectObject);
 
+        // When taking a picture, send it for recognition
         cameraView.setCameraListener(new CameraListener() {
             @Override
             public void onPictureTaken(byte[] picture) {
@@ -65,14 +73,13 @@ public class DetectActivity extends BaseActivity {
 
                 Toast.makeText(getApplicationContext(), "Analyzing image...", Toast.LENGTH_LONG).show();
 
+                // Decode the picture to a bitmap and display it
                 Bitmap bitmap = BitmapFactory.decodeByteArray(picture, 0, picture.length);
-
                 bitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false);
-
                 imageViewResult.setImageBitmap(bitmap);
-
                 Intent requestRecognizeIntent = new Intent(DetectActivity.this, ObjectRecoginzerService.class);
 
+                // Save the image to file for later usage by recognition service
                 try {
                     String filename = "img_locate.jpeg";
                     FileOutputStream stream = openFileOutput(filename, Context.MODE_PRIVATE);
@@ -134,6 +141,7 @@ public class DetectActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Terminate activity if permission for camera is not granted
         int i = 0;
         for(String permission : permissions) {
             if(permission.equals(Manifest.permission.CAMERA) || permission.equals(Manifest.permission.CAPTURE_AUDIO_OUTPUT)) {

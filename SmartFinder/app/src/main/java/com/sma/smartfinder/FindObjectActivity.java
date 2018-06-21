@@ -7,6 +7,10 @@ import android.widget.ProgressBar;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Activity for finding an object
+ */
+@Deprecated
 public class FindObjectActivity extends BaseActivity {
 
     @Override

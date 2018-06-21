@@ -31,12 +31,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for object finding related operations
+ */
 public class ObjectFinderController extends Controller {
-    
+    /**
+     * The service for uploading an image
+     */
     private final ImageUploadService imageUploadService;
-    
+
+    /**
+     * The service for finding an object
+     */
     private final NetworkObjectFinderService networkObjectFinderService;
-    
+
+    /**
+     * The object recognizer
+     */
     private final ObjectRecognizer objectRecognizer;
     
     @Inject

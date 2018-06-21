@@ -43,16 +43,35 @@ import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Activity for displaying a recognized object
+ */
 public class ObjectRecognizedActivity extends BaseActivity {
     private static final String TAG = ObjectRecognizedActivity.class.getSimpleName();
 
+    /**
+     * Display the image
+     */
     private ImageView objectView;
+
+    /**
+     * A list view of recognitions
+     */
     private ListView listView;
 
+    /**
+     * A list of recognitions populated by the server
+     */
     private List<String> recognitions;
 
+    /**
+     * Currently selected recognition
+     */
     private String currentSelectionName = null;
 
+    /**
+     * The image as bitmap
+     */
     private Bitmap image;
 
     private Button objectLabelButton = null;
@@ -71,6 +90,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
         listView = (ListView) findViewById(R.id.list_view_recognitions);
         objectView = (ImageView) findViewById(R.id.list_item_object_view);
 
+        // If there are recognitions passed to this activity, add the NONE OF THE ABOVE option
         recognitions = getIntent().getStringArrayListExtra("recognitions");
         if(recognitions != null) {
             recognitions.add(NONE_OF_THE_ABOVE);
@@ -81,6 +101,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
 
         info = (TextView)findViewById(R.id.object_recognized_info);
 
+        // Load the image
         Bitmap bmp = null;
         String filename = getIntent().getStringExtra("image");
         try {
@@ -91,10 +112,11 @@ public class ObjectRecognizedActivity extends BaseActivity {
             e.printStackTrace();
         }
 
-        //TODO
+        // Display the image
         objectView.setImageBitmap(bmp);
         image = bmp;
 
+        // If there are no recognitions, prompt the user to enter a label
         if(recognitions == null || recognitions.size() == 0) {
             showLabelInput();
         } else {
@@ -103,11 +125,13 @@ public class ObjectRecognizedActivity extends BaseActivity {
 
             listView.setAdapter(adapter);
 
+            // Upon clicking a recognition, prompt the user to accept or not
             final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
+                            // If the user accepts the recognition
                             if (image != null && currentSelectionName != null) {
                                 HashMap<String, String> extras = new HashMap<>();
                                 extras.put("imageClass", currentSelectionName);
@@ -130,6 +154,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
                                     return;
                                 }
 
+                                // Try uploading the image
                                 try {
                                     Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
                                     if (logged.get()) {
@@ -181,29 +206,11 @@ public class ObjectRecognizedActivity extends BaseActivity {
             });
 
         }
-
-        /*
-        btnAccept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(bmp != null) {
-                    ContentValues values = new ContentValues();
-                    values.put(ObjectContract.Column.OBJECT_NAME, currentImage.first);
-                    values.put(ObjectContract.Column.IMG, currentImage.second);
-                    values.put(ObjectContract.Column.CREATED_AT, new Date().getTime());
-                    Uri uri = getContentResolver().insert(ObjectContract.CONTENT_URI, values);
-
-                    if(uri != null) {
-                        Log.i(TAG, String.format("Inserted: %s", currentImage.first));
-                    }
-                }
-                imageViewResult.setImageBitmap(null);
-                textViewResult.setText("");
-                btnAcceptObject.setVisibility(View.INVISIBLE);
-            }
-        });*/
     }
 
+    /**
+     * Updates activity so the user can input the label for an object
+     */
     private void showLabelInput() {
         listView.setVisibility(View.GONE);
         objectLabel.setVisibility(View.VISIBLE);
@@ -218,6 +225,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
                 }
 
                 if(image != null) {
+                    // Get the class from the user and the current image
                     HashMap<String, String> extras = new HashMap<>();
                     extras.put("imageClass", objectLabel.getText().toString());
                     extras.put("trainable", "true");
@@ -240,6 +248,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
                         return;
                     }
 
+                    // Try uploading the image using the provided data
                     try {
                         Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
                         if(logged.get()) {
@@ -266,12 +275,18 @@ public class ObjectRecognizedActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Handles the response from the server and inserts the newly recognized object into the local database if successful
+     * @param response
+     */
     public void handleResponse(String response) {
         if(response != null) {
             try {
+                // Get the inserted id
                 JSONObject jsonObject = new JSONObject(response);
                 int id = (int)jsonObject.get("id");
 
+                // Save the PNG image as byte array(BLOB)
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 image.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();

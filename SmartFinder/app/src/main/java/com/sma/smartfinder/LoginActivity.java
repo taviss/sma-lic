@@ -23,21 +23,45 @@ import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Activity for logging a user in
+ */
 public class LoginActivity extends BaseActivity {
+    /**
+     * Username
+     */
     private EditText userText;
+
+    /**
+     * Password
+     */
     private EditText passText;
+
+    /**
+     * Login button
+     */
     private Button loginButton;
+
+    /**
+     * Link to registration activity
+     */
     private TextView signupView;
+
+    /**
+     * Link to password reset activity
+     */
     private TextView resetPassView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Retrieve saved user information
         final SmartFinderApplication smartFinderApplication = SmartFinderApplicationHolder.getApplication();
         final String user = smartFinderApplication.getUser();
         final String pass = smartFinderApplication.getPass();
         final String address = smartFinderApplication.getCameraAddress();
         final boolean tryLogin = smartFinderApplication.tryLogin();
 
+        // Try logging in
         if(user != null && address != null && pass != null && tryLogin) {
             tryLogin(address, user, pass);
         }
@@ -94,6 +118,12 @@ public class LoginActivity extends BaseActivity {
         moveTaskToBack(true);
     }
 
+    /**
+     * Attempt a log in and finishes this activity if successful
+     * @param address
+     * @param user
+     * @param pass
+     */
     public void tryLogin(final String address, final String user, final String pass) {
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme);
@@ -108,6 +138,7 @@ public class LoginActivity extends BaseActivity {
                     Future<Boolean> loggedIn = HTTPUtility.login(address + "/login/submit", "userName", user, "userPass", pass);
                     if (loggedIn.get()) {
                         progressDialog.dismiss();
+                        // Update user info
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                         preferences.edit().putString("username", user).apply();
                         preferences.edit().putString("password", pass).apply();
@@ -138,6 +169,12 @@ public class LoginActivity extends BaseActivity {
 
     }
 
+    /**
+     * Validates the username and password
+     * @param user
+     * @param password
+     * @return
+     */
     public boolean validate(String user, String password) {
         boolean valid = true;
 

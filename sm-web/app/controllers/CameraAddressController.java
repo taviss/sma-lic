@@ -18,6 +18,9 @@ import javax.transaction.Transactional;
 
 import static utils.PasswordHashing.hashPassword;
 
+/**
+ * Controller for {@link CameraAddress} related operations
+ */
 public class CameraAddressController extends Controller {
     @Inject
     private FormFactory formFactory;

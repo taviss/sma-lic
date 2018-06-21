@@ -28,6 +28,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 //TODO Turn this into a AsyncTask/Wrapper around an image upload
+//FIXME Replace implementation with a library
+@Deprecated
 public class HTTPUtility {
     private static String attachmentName = "object";
     private static String attachmentFileName = "object.jpg";

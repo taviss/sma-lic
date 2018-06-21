@@ -9,6 +9,8 @@ import com.sma.smartfinder.SmartFinderApplicationHolder;
 
 /**
  * Created by octavian.salcianu on 12/19/2017.
+ *
+ * DB helper for Objects
  */
 
 public class DbHelper extends SQLiteOpenHelper {

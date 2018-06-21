@@ -8,7 +8,11 @@ import android.widget.Button;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Activity for changing settings
+ */
 public class SettingsActivity extends BaseActivity {
+    // Buttons for different operations (self explanatory)
     private Button changePass;
     private Button logout;
     private Button cameras;

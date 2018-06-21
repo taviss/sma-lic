@@ -36,7 +36,7 @@ public class CameraAddressDAO {
     /**
      * Returns the cameraAddress with "id"
      * @param id
-     * @return User
+     * @return CameraAddress
      */
     public CameraAddress get(Long id) {
         return wrap(em -> get(em, id));
@@ -44,8 +44,8 @@ public class CameraAddressDAO {
 
     /**
      * Adds the newly created cameraAddress to the database(luckily) and returns the new cameraAddress with the new "id" from db
-     * @param user : User
-     * @return user : User
+     * @param cameraAddress : CameraAddress
+     * @return CameraAddress
      */
     public CameraAddress create(EntityManager em, CameraAddress cameraAddress) {
         cameraAddress.setId(null);
@@ -65,7 +65,7 @@ public class CameraAddressDAO {
     /**
      * Returns the cameraAddress with "id"
      * @param id
-     * @return User
+     * @return CameraAddress
      */
     public CameraAddress get(EntityManager em, Long id) {
         return em.find(CameraAddress.class, id);

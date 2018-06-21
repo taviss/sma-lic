@@ -23,11 +23,33 @@ import java.util.concurrent.Future;
 
 import sma.com.smartfinder.R;
 
+/**
+ * Activity for registering an user
+ */
 public class RegisterActivity extends BaseActivity {
+    /**
+     * Username
+     */
     private EditText userText;
+
+    /**
+     * Email
+     */
     private EditText emailText;
+
+    /**
+     * Password
+     */
     private EditText passText;
+
+    /**
+     * Register button
+     */
     private Button registerButton;
+
+    /**
+     * Link to log in activity
+     */
     private TextView loginView;
 
     @Override
@@ -65,6 +87,13 @@ public class RegisterActivity extends BaseActivity {
         moveTaskToBack(true);
     }
 
+    /**
+     * Attempts to register the user and updates the preferences accordingly
+     * @param address
+     * @param mail
+     * @param user
+     * @param pass
+     */
     public void tryRegister(String address, String mail, String user, String pass) {
         final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this,
                 R.style.AppTheme);

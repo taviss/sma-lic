@@ -18,6 +18,9 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Service for searching for an object
+ */
 @Singleton
 public class NetworkObjectFinderService {
     
@@ -33,7 +36,7 @@ public class NetworkObjectFinderService {
         this.objectRecognizer = objectRecognizer;
     }
     
-    //TODO Async
+    //TODO Should this be in a different thread?
     public List<Recognition> findObject(Long userId, List<Camera> cameras, byte[] imageBytes) {
         synchronized (cache) {
             ObjectFinderService objectFinderService = cache.get(userId);
