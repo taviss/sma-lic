@@ -57,6 +57,7 @@ public class ImageController extends Controller {
         
         if (imageFile != null) {
             User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
+            uploadedImage.setImagePath("placeholder");
             Image image = imageDAO.create(uploadedImage);
             image.setOwner(foundUser);
             
