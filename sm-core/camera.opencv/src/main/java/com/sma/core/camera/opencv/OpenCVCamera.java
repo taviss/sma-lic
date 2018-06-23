@@ -12,15 +12,6 @@ import org.opencv.imgproc.Imgproc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.color.ColorSpace;
-import java.awt.image.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-
 /**
  * {@inheritDoc}
  */
@@ -42,6 +33,7 @@ public class OpenCVCamera implements Camera {
         String osName = System.getProperty("os.name");
         //String opencvpath = System.getProperty("opencv.path");
         String opencvpath = "C:\\Users\\Tavi\\Downloads\\opencv\\build\\java";
+        System.out.println("OS=" + osName);
 
         if(osName.startsWith("Windows")) {
             int bitness = Integer.parseInt(System.getProperty("sun.arch.data.model"));
@@ -82,16 +74,21 @@ public class OpenCVCamera implements Camera {
         if (capturedVideo.isOpened()) {
             if(capturedVideo.read(mat)) {
                 if (!mat.empty()) {
+                    // Reshape the image to a square shape
+                    Mat resizedImage = new Mat();
+                    double size = mat.size().height > mat.size().width ? mat.size().width : mat.size().height;
+                    Size sqr = new Size(size, size);
+                    Imgproc.resize(mat, resizedImage, sqr);
                     // Transform the frame to a JPEG image and return it as a byte array.
                     MatOfByte mob=new MatOfByte();
-                    Highgui.imencode(".jpg", mat, mob);
+                    Highgui.imencode(".jpg", resizedImage, mob);
                     return mob.toArray();
                 }
             } else {
                 LOG.warn("Mat is empty.");
             }
         } else {
-            LOG.warn("Camera connection problem. Check addressString");
+            System.out.println("Camera connection problem. Check addressString");
         }
         
         return new byte[0];

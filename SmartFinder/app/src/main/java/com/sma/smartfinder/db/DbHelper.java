@@ -23,12 +23,13 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = String
-                .format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s text, %s text, %s blob, %s int)",
+                .format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s text, %s text, %s blob, %s blob, %s int)",
                         ObjectContract.TABLE,
                         ObjectContract.Column.ID,
                         ObjectContract.Column.OWNER,
                         ObjectContract.Column.OBJECT_NAME,
                         ObjectContract.Column.IMG,
+                        ObjectContract.Column.CROPPED_IMG,
                         ObjectContract.Column.CREATED_AT);
         Log.d(TAG, sql);
         db.execSQL(sql);

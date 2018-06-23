@@ -20,7 +20,7 @@ import org.tensorflow.Tensor;
 import org.tensorflow.types.UInt8;
 
 /** Sample use of the TensorFlow Java API to label images using a pre-trained model. */
-public class TensorflowImageClassifier implements ObjectRecognizer {
+public class TensorflowImageClassifier /* implements ObjectRecognizer */{
     private URI tfModel;
     private URI tfLabels;
 
@@ -47,7 +47,7 @@ public class TensorflowImageClassifier implements ObjectRecognizer {
                             labels.get(bestLabelIdx),
                             labelProbabilities[bestLabelIdx] * 100f));
             
-            TensorflowRecognition recognition = new TensorflowRecognition(Integer.toString(bestLabelIdx), labels.get(bestLabelIdx), labelProbabilities[bestLabelIdx], imageBytes);
+            Recognition recognition = new Recognition(Integer.toString(bestLabelIdx), labels.get(bestLabelIdx), labelProbabilities[bestLabelIdx], imageBytes, 0, 0, 0, 0);
             
             
             return Arrays.asList();

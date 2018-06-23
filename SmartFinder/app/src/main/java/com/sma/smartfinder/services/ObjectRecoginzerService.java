@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.sma.object.recognizer.api.Recognition;
 import com.sma.smartfinder.SettingsActivity;
 import com.sma.smartfinder.http.utils.HTTPUtility;
 
@@ -19,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -82,7 +85,9 @@ public class ObjectRecoginzerService  extends IntentService {
             Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
             if(logged.get()) {
                 // POST the image for recognition and handle response
-                Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/recognize", bmp);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/recognize", baos.toByteArray());
                 handleResponse(new String(response.get()), filename);
             } else {
                 handleResponse(null, null);
@@ -114,15 +119,7 @@ public class ObjectRecoginzerService  extends IntentService {
                 JSONArray jsonArray = new JSONArray(response);
 
                 if (jsonArray.length() != 0) {
-                    //TODO Use Recognition class from sm-core!
-                    ArrayList<String> recognitions = new ArrayList<>();
-
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        recognitions.add((String) jsonObject.get("title"));
-                    }
-
-                    sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_RECOGNIZED").putExtra("image", image).putStringArrayListExtra("recognitions", recognitions));
+                    sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_RECOGNIZED").putExtra("image", image).putExtra("recognitions", response));
                     return;
                 }
             } catch (JSONException e) {

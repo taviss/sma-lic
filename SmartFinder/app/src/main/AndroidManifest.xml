@@ -48,11 +48,12 @@
         <activity android:name="com.sma.smartfinder.ObjectRecognizedActivity" />
         <activity android:name="com.sma.smartfinder.SettingsActivity" />
         <activity android:name="com.sma.smartfinder.DetailsActivity" />
-        <activity android:name="com.sma.smartfinder.ObjectFoundActivity" />
+        <activity android:name="com.sma.smartfinder.ObjectFoundDetailsActivity" />
         <activity android:name="com.sma.smartfinder.RegisterActivity" />
         <activity android:name="com.sma.smartfinder.ChangePasswordActivity" />
         <activity android:name="com.sma.smartfinder.CamerasActivity" />
-        <activity android:name="com.sma.smartfinder.AddCameraActivity"></activity>
+        <activity android:name="com.sma.smartfinder.AddCameraActivity" />
+        <activity android:name="com.sma.smartfinder.ObjectFoundActivity"></activity>
     </application>
 
 </manifest>

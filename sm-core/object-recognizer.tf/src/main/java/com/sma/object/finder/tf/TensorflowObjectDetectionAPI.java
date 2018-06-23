@@ -23,12 +23,12 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
 
     // Config values.
     private String inputName;
-    private int inputSize;
+    //private int inputSize;
 
     // Pre-allocated buffers.
     private Vector<String> labels = new Vector<String>();
-    private int[] intValues;
-    private byte[] byteValues;
+    //private int[] intValues;
+    //private byte[] byteValues;
     private float[] outputLocations;
     private float[] outputScores;
     private float[] outputClasses;
@@ -74,7 +74,7 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
         if (inputOp == null) {
             throw new RuntimeException("Failed to find input Node '" + d.inputName + "'");
         }
-        d.inputSize = inputSize;
+        //d.inputSize = inputSize;
         // The outputScoresName node has a shape of [N, NumLocations], where N
         // is the batch size.
         final Operation outputOp1 = g.operation("detection_scores");
@@ -93,8 +93,6 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
         // Pre-allocate buffers.
         d.outputNames = new String[] {"detection_boxes", "detection_scores",
                 "detection_classes", "num_detections"};
-        d.intValues = new int[d.inputSize * d.inputSize];
-        d.byteValues = new byte[d.inputSize * d.inputSize * 3];
         d.outputScores = new float[MAX_RESULTS];
         d.outputLocations = new float[MAX_RESULTS * 4];
         d.outputClasses = new float[MAX_RESULTS];
@@ -106,8 +104,22 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
 
     @Override
     public List<Recognition> identifyImage(byte[] imageBytes) {
+        int size = 224;
         try {
+            ByteArrayInputStream in = new ByteArrayInputStream(imageBytes);
+            BufferedImage bufferedImage = ImageIO.read(in);
+            size = Integer.min(bufferedImage.getHeight(), bufferedImage.getWidth());
+        } catch(IOException e) {
+            // NO-OP;
+        }
+        return identifyImage(imageBytes, size);
+    }
 
+    @Override
+    public List<Recognition> identifyImage(byte[] imageBytes, int inputSize) {
+        System.out.println("API#identifyImage[size=" + inputSize + "]");
+
+        try {
             Tensor<UInt8> image = constructAndExecuteGraphToNormalizeImage(imageBytes);
             inferenceInterface.addFeed(inputName, image);
         } catch(IOException e) {
@@ -128,12 +140,12 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
         inferenceInterface.fetch(outputNames[3], outputNumDetections);
 
         // Find the best detections.
-        final PriorityQueue<TensorflowRecognition> pq =
-                new PriorityQueue<TensorflowRecognition>(
+        final PriorityQueue<Recognition> pq =
+                new PriorityQueue<Recognition>(
                         1,
-                        new Comparator<TensorflowRecognition>() {
+                        new Comparator<Recognition>() {
                             @Override
-                            public int compare(final TensorflowRecognition lhs, final TensorflowRecognition rhs) {
+                            public int compare(final Recognition lhs, final Recognition rhs) {
                                 // Intentionally reversed to put high confidence at the head of the queue.
                                 return Float.compare(rhs.getConfidence(), lhs.getConfidence());
                             }
@@ -141,8 +153,18 @@ public class TensorflowObjectDetectionAPI implements ObjectRecognizer {
 
         // Scale them back to the input size.
         for (int i = 0; i < outputScores.length; ++i) {
+            if(outputScores[i] == 0) {
+                continue;
+            }
+
+            int left = (int)(outputLocations[4 * i + 1] * inputSize);
+            int top = (int)(outputLocations[4 * i] * inputSize);
+            int right = (int)(outputLocations[4 * i + 3] * inputSize);
+            int bottom = (int)(outputLocations[4 * i + 2] * inputSize);
+
             pq.add(
-                    new TensorflowRecognition("" + i, labels.get((int) outputClasses[i]), outputScores[i], imageBytes));
+                    new Recognition("" + i, labels.get((int) outputClasses[i]), outputScores[i], imageBytes,
+                            left, top, right, bottom));
         }
 
         final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();

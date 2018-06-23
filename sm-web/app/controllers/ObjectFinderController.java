@@ -7,6 +7,7 @@ import com.sma.core.object.finder.service.api.ObjectFinderService;
 import com.sma.core.object.finder.service.impl.ObjectFinderServiceImpl;
 import com.sma.object.recognizer.api.ObjectRecognizer;
 import com.sma.object.recognizer.api.Recognition;
+import com.sma.recognition.interpreter.impl.AbstractRecognitionInterpreter;
 import models.CameraAddress;
 import models.Image;
 import models.User;
@@ -91,19 +92,24 @@ public class ObjectFinderController extends Controller {
                 User foundUser = userDAO.getUserByName(Http.Context.current().request().username());
                 
                 for(CameraAddress cameraAddress : foundUser.getCameraAddresses()) {
-                    cameras.add(CameraFactory.createCamera(cameraAddress));
+                    Camera camera = CameraFactory.createCamera(cameraAddress);
+                    if(camera != null) {
+                        System.out.println("Added camera " + camera.getId() + " of " + camera);
+                        cameras.add(camera);
+                    }
                 }
                 
                 Image image = imageDAO.get(id);
                 if(image != null) {
                     File img = new File(image.getImagePath());
                     byte[] imageBytes = Files.readAllBytes(img.toPath());
-                    List<Recognition> recognizedImages = this.networkObjectFinderService.findObject(1L, cameras, imageBytes);
+                    List<Recognition> recognizedImages = this.networkObjectFinderService.findObject(foundUser.getId(), cameras, imageBytes);
                     if (recognizedImages != null && recognizedImages.size() > 0) {
                         System.out.println("Total recognitions: " + recognizedImages.size());
                         imageUploadService.uploadLastSeenImage(image, String.valueOf(image.getId()), recognizedImages.get(0).getSource(), foundUser);
                         imageDAO.update(image);
-                        return ok(recognizedImages.get(0).getSource()).as("image/jpg");
+                        //(recognizedImages.get(0).getSource()).as("image/jpg"
+                        return ok(Json.toJson(recognizedImages));
                     } else {
                         if(image.getLastSeenImage() != null && !image.getLastSeenImage().trim().equals("")) {
                             File lastSeen = new File(image.getLastSeenImage());
@@ -112,9 +118,11 @@ public class ObjectFinderController extends Controller {
                         return ok("Object not found!");
                     }
                 } else {
+                    System.out.println("No such image in db");
                     return ok("Object not found!");
                 }
             } catch (IOException e) {
+                e.printStackTrace();
                 return ok("Object not found!");
             }
         } else {
@@ -140,6 +148,7 @@ public class ObjectFinderController extends Controller {
                 byte[] imageBytes = byteArrayOutputStream.toByteArray();
 
                 List<Recognition> recognitions = this.objectRecognizer.identifyImage(imageBytes);
+                recognitions = recognitions.stream().filter(p -> p.getConfidence() >= AbstractRecognitionInterpreter.MINIMUM_CONFIDENCE).collect(Collectors.toList());
                 return ok(Json.toJson(recognitions));
             } catch (IOException e) {
                 return ok("No object found!");

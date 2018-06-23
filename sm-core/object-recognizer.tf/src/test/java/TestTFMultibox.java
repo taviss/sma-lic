@@ -1,5 +1,6 @@
 
 import com.sma.core.camera.opencv.OpenCVCamera;
+import com.sma.core.camera.st.impl.ImageCamera;
 import com.sma.object.finder.tf.TensorflowObjectDetectionAPI;
 import com.sma.object.recognizer.api.ObjectRecognizer;
 import com.sma.object.recognizer.api.Recognition;
@@ -7,6 +8,7 @@ import org.junit.Test;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
@@ -46,6 +48,7 @@ public class TestTFMultibox {
 
     @Test
     public void testAPI() throws Exception {
+
         BufferedImage bufferedImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("mouse.jpg"));
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "jpeg", byteArrayOutputStream);
@@ -62,24 +65,55 @@ public class TestTFMultibox {
                 300
         );
 
+        /*
         List<Recognition> recognitions = tensorflowMultibox.identifyImage(byteArrayOutputStream.toByteArray());
         for(Recognition recognition : recognitions) {
             if(recognition.getConfidence() > 0.7) {
                 System.out.println(recognition.getTitle() + " : " + recognition.getConfidence());
             }
-        }
+        }*/
 
 
-        /*
+
         System.out.println("OpenCV recognitions:");
 
-        OpenCVCamera openCVCamera = new OpenCVCamera("1", "http://192.168.137.1:8080/live?dummy=x.mjpg");
-        byte[] opencvImage = openCVCamera.getSnapshot();
+        URL img = new URL("http://admin:admin123@193.226.12.217:8888/Streaming/Channels/1/picture");
+        ImageCamera imageCamera = new ImageCamera("1", img);
+        byte[] getImg = imageCamera.getSnapshot();
 
-        List<Recognition> recognitionsO = tensorflowMultibox.identifyImage(opencvImage);
+
+
+        ByteArrayInputStream in = new ByteArrayInputStream(getImg);
+        BufferedImage bufferedImage1 = ImageIO.read(in);
+        int size = bufferedImage1.getHeight() > bufferedImage1.getWidth() ? bufferedImage1.getWidth() : bufferedImage1.getHeight();
+        ByteArrayOutputStream byteArrayOutputStream1 = new ByteArrayOutputStream();
+        bufferedImage1 = bufferedImage1.getSubimage(0, 0, size, size);
+        ImageIO.write(bufferedImage1, "jpeg", byteArrayOutputStream1);
+        getImg = byteArrayOutputStream1.toByteArray();
+
+        List<Recognition> recognitionsO = tensorflowMultibox.identifyImage(getImg);
         for(Recognition recognition : recognitionsO) {
+            if(recognition.getConfidence() > 0.5f) {
+                ByteArrayInputStream bais = new ByteArrayInputStream(recognition.getSource());
+                BufferedImage image = ImageIO.read(bais);
+                File outputfile = new File("D:/" + recognition.getTitle() + recognition.getId() + ".jpg");
+                ImageIO.write(image, "jpg", outputfile);
+
+                ByteArrayInputStream bais1 = new ByteArrayInputStream(recognition.getBoundedObject());
+                BufferedImage boundedImage = ImageIO.read(bais1);
+                File outputfile2 = new File("D:/" + recognition.getTitle() + recognition.getId() + "_bounded.jpg");
+                ImageIO.write(boundedImage, "jpg", outputfile2);
+
+                List<Recognition> boundedRec = tensorflowMultibox.identifyImage(recognition.getBoundedObject(), Integer.min(boundedImage.getHeight(), boundedImage.getWidth()));
+
+                for(Recognition boundedRecog : boundedRec) {
+                    if(boundedRecog.getConfidence() > 0.5f) {
+                        System.out.println("BOUNDED: " + boundedRecog.getTitle());
+                    }
+                }
+            }
             System.out.println(recognition.getTitle() + " : " + recognition.getConfidence());
-        }*/
+        }
 
     }
 }

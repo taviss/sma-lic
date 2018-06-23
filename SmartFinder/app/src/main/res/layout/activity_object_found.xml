@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sma.smartfinder.ObjectFoundActivity">
+    tools:context="com.sma.smartfinder.ObjectFoundDetailsActivity">
 
     <TextView
         android:id="@+id/list_item_object_name"
@@ -19,7 +19,7 @@
     <ImageView
         android:id="@+id/list_item_object_view"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"

@@ -3,7 +3,8 @@ package models;
 public enum CameraType {
     RTMP("RTMP"),
     OPENCV("OPENCV"),
-    STATIC("STATIC");
+    STATIC("STATIC"),
+    UNKNOWN("UNKNOWN");
 
     private final String type;
 

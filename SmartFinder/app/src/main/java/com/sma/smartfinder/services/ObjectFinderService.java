@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.sma.smartfinder.SettingsActivity;
 import com.sma.smartfinder.http.utils.HTTPUtility;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.FileInputStream;
@@ -98,6 +99,16 @@ public class ObjectFinderService extends IntentService {
         if(new String(response).contains("Object not found!")) {
             sendBroadcast(new Intent("com.sma.smartfinder.action.NO_OBJECT_FOUND"));
         } else {
+            try {
+                JSONArray jsonArray = new JSONArray(new String(response));
+
+                if (jsonArray.length() != 0) {
+                    sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_FOUND").putExtra("recognitions", new String(response)));
+                    return;
+                }
+            } catch(JSONException e) {
+                // NO-OP;
+            }
             sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_FOUND").putExtra("image", response).putExtra("name", name));
         }
     }

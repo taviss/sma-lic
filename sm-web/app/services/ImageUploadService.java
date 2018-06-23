@@ -41,13 +41,15 @@ public class ImageUploadService {
             String uploadedImagePath = uploadPath + owner.getId();
             new File(uploadedImagePath).mkdirs();
             
-            uploadedImagePath += "/" + image.getId() + fileName;
+            uploadedImagePath += "/" + image.getId() + ".jpg";
+            System.out.println("Uploading image " + image.getId() + " to " + uploadedImagePath);
             
             try {
                 Files.copy(file.toPath(), new File(uploadedImagePath).toPath(), REPLACE_EXISTING);
 
                 image.setImagePath(uploadedImagePath);
             } catch(IOException e) {
+                e.printStackTrace();
                 return false;
             }
             return true;
@@ -72,7 +74,9 @@ public class ImageUploadService {
             String uploadedImagePath = uploadPath + owner.getId() + "/last";
             new File(uploadedImagePath).mkdirs();
 
-            uploadedImagePath += "/" + fileName + ".jpg";
+            uploadedImagePath += "/" + image.getId() + ".jpg";
+
+            System.out.println("Uploading last seen for image " + image.getId() + " to " + uploadedImagePath);
 
             try {
                 new File(uploadedImagePath).delete();
@@ -85,6 +89,7 @@ public class ImageUploadService {
                 }
                 image.setLastSeenImage(uploadedImagePath);
             } catch(IOException e) {
+                e.printStackTrace();
                 return false;
             }
             return true;

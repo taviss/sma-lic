@@ -58,6 +58,58 @@ public class HTTPUtility {
         return cameraAddress + "/" + url;
     }
 
+    public static Future<byte[]> get(final String urlString) throws IOException {
+        return executors.submit(
+                new Callable<byte[]>() {
+                    @Override
+                    public byte[] call() throws Exception {
+                        HttpURLConnection httpUrlConnection = null;
+                        URL url = new URL("http://" + urlString);
+                        httpUrlConnection = (HttpURLConnection) url.openConnection();
+                        httpUrlConnection.setUseCaches(false);
+                        httpUrlConnection.setDoOutput(true);
+
+                        if (cookieManager.getCookieStore().getCookies().size() > 0) {
+                            httpUrlConnection.setRequestProperty("Cookie",
+                                    TextUtils.join(";",  cookieManager.getCookieStore().getCookies()));
+                        }
+
+                        httpUrlConnection.setRequestMethod("POST");
+                        httpUrlConnection.setRequestProperty("Accept","application/json");
+                        httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+
+                        JSONObject jsonParam = new JSONObject();
+
+                        Log.i("JSON", jsonParam.toString());
+                        DataOutputStream os = new DataOutputStream(httpUrlConnection.getOutputStream());
+                        os.writeBytes(jsonParam.toString());
+
+                        os.flush();
+                        os.close();
+
+                        InputStream responseStream = new
+                                BufferedInputStream(httpUrlConnection.getInputStream());
+
+                        byte[] resultBuff = new byte[0];
+                        byte[] buff = new byte[1024];
+                        int k = -1;
+                        while((k = responseStream.read(buff, 0, buff.length)) > -1) {
+                            byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size = bytes already read + bytes last read
+                            System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length); // copy previous bytes
+                            System.arraycopy(buff, 0, tbuff, resultBuff.length, k);  // copy current lot
+                            resultBuff = tbuff; // call the temp buffer as your result buff
+                        }
+
+
+                        responseStream.close();
+
+                        httpUrlConnection.disconnect();
+
+                        return resultBuff;
+                    }
+                }
+        );
+    }
 
     public static Future<Boolean> register(final String urlString, final String userField, final String user, final String mailField, final String mail, final String passwordField, final String password) throws JSONException, IOException {
 
@@ -377,7 +429,7 @@ public class HTTPUtility {
 
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("address", address);
-                        jsonObject.put("cameraType", "OPENCV");
+                        jsonObject.put("cameraType", "UNKNOWN");
 
                         DataOutputStream request = new DataOutputStream(
                                 httpUrlConnection.getOutputStream());
@@ -464,7 +516,7 @@ public class HTTPUtility {
     }
 
 
-    public static Future<byte[]> postImage(String urlString, Bitmap bitmap) throws IOException {
+    public static Future<byte[]> postImage(String urlString, byte[] bitmap) throws IOException {
         return postImage(urlString, bitmap, new HashMap<String, String>());
     }
 
@@ -524,7 +576,7 @@ public class HTTPUtility {
     }
 
 
-    public static Future<byte[]> postImage(final String urlString, final Bitmap bitmap, final HashMap<String, String> extras) throws IOException {
+    public static Future<byte[]> postImage(final String urlString, final byte[] image, final HashMap<String, String> extras) throws IOException {
         return executors.submit(
                 new Callable<byte[]>() {
                     @Override
@@ -568,7 +620,8 @@ public class HTTPUtility {
         request.write(pixels);
         */
 
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, request);
+                        request.write(image, 0, image.length);
+                        //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, request);
 
                         request.writeBytes(crlf);
 

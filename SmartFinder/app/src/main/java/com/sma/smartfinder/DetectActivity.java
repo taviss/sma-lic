@@ -61,6 +61,7 @@ public class DetectActivity extends BaseActivity {
         setContentView(R.layout.activity_detect);
         cameraView = (CameraView) findViewById(R.id.cameraView);
         imageViewResult = (ImageView) findViewById(R.id.imageViewResult);
+        imageViewResult.setVisibility(View.GONE);
 
         btnToggleCamera = (Button) findViewById(R.id.btnToggleCamera);
         btnDetectObject = (Button) findViewById(R.id.btnDetectObject);
@@ -76,6 +77,8 @@ public class DetectActivity extends BaseActivity {
                 // Decode the picture to a bitmap and display it
                 Bitmap bitmap = BitmapFactory.decodeByteArray(picture, 0, picture.length);
                 bitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false);
+                cameraView.setVisibility(View.GONE);
+                imageViewResult.setVisibility(View.VISIBLE);
                 imageViewResult.setImageBitmap(bitmap);
                 Intent requestRecognizeIntent = new Intent(DetectActivity.this, ObjectRecoginzerService.class);
 

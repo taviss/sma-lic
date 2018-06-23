@@ -22,7 +22,7 @@ public class CameraAddress {
 
     @Column(name = "c_address", nullable = false)
     @Constraints.MinLength(3)
-    @Constraints.MaxLength(64)
+    @Constraints.MaxLength(256)
     @Constraints.Required
     private String address;
 

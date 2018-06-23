@@ -31,7 +31,7 @@ public class ObjectRecognitionReceiver extends BroadcastReceiver {
                 context.startActivity(objectRecognizedIntent);
             } else if (intent.getAction().equals("com.sma.smartfinder.action.OBJECT_RECOGNIZED")) {
                 Intent objectRecognizedIntent = new Intent(context, ObjectRecognizedActivity.class);
-                objectRecognizedIntent.putExtra("image", intent.getStringExtra("image")).putStringArrayListExtra("recognitions", intent.getStringArrayListExtra("recognitions"));
+                objectRecognizedIntent.putExtra("image", intent.getStringExtra("image")).putExtra("recognitions", intent.getStringExtra("recognitions"));
                 context.startActivity(objectRecognizedIntent);
             }
         } else {
@@ -40,7 +40,7 @@ public class ObjectRecognitionReceiver extends BroadcastReceiver {
             PendingIntent operation = PendingIntent.getActivity(
                     context,
                     -1,
-                    new Intent(context, ObjectRecognizedActivity.class).putStringArrayListExtra("recognitions", intent.getStringArrayListExtra("recognitions")),
+                    new Intent(context, ObjectRecognizedActivity.class).putExtra("recognitions", intent.getStringExtra("recognitions")),
                     PendingIntent.FLAG_ONE_SHOT
             );
 

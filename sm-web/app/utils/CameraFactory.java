@@ -7,6 +7,7 @@ import com.sma.core.camera.st.impl.ImageCamera;
 import models.CameraAddress;
 
 import java.io.File;
+import java.net.URL;
 
 /**
  * Factory for creating a {@link Camera} from the {@link CameraAddress}
@@ -27,13 +28,44 @@ public class CameraFactory {
             case STATIC: {
                 return createStaticCamera(String.valueOf(cameraAddress.getId()), cameraAddress.getAddress());
             }
+            case UNKNOWN: {
+                return tryCreateUnknownCamera(cameraAddress);
+            }
             default:
                 return null;
         }
     }
+
+    public static Camera tryCreateUnknownCamera(CameraAddress cameraAddress) {
+        try {
+            ImageCamera imageCamera = createStaticCamera(String.valueOf(cameraAddress.getId()), new URL(cameraAddress.getAddress()));
+            if(imageCamera.getSnapshot() != null) {
+                return imageCamera;
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            // NO-OP;
+        }
+
+        try {
+            OpenCVCamera openCVCamera = createOpenCVCamera(String.valueOf(cameraAddress.getId()), cameraAddress.getAddress());
+            if(openCVCamera.getSnapshot() != null) {
+                return openCVCamera;
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            // NO-OP;
+        }
+
+        return null;
+    }
     
     public static ImageCamera createStaticCamera(String id, String path) {
         return new ImageCamera(id, new File(path));
+    }
+
+    public static ImageCamera createStaticCamera(String id, URL url) {
+        return new ImageCamera(id, url);
     }
     
     public static OpenCVCamera createOpenCVCamera(String id, String res) {

@@ -83,11 +83,14 @@ public class ObjectFinderServiceImpl implements ObjectFinderService{
             
             List<Recognition> results = objectRecognizer.identifyImage(cameraSnapshot);
             List<Recognition> imageIdentification = imageClassifier.identifyImage(imageBytes);
-            imageIdentification.sort(new ConfidenceComparator().reversed());
+            if(results != null && results.size() > 0 && imageIdentification != null && imageIdentification.size() > 0) {
+                imageIdentification.sort(new ConfidenceComparator().reversed());
 
-            List<Recognition> interpreted = InterpretationBootstrap.getInterpreter().interpret(results, imageIdentification.get(0));
-            
-            //TODO Add box
+                List<Recognition> interpreted = InterpretationBootstrap.getInterpreter().interpret(results, imageIdentification.get(0));
+
+                globalRecognitions.addAll(interpreted);
+            }
+            /*
             for(Recognition recognition : interpreted) {
                 if(bestGlobalConfidence < recognition.getConfidence()) {
                     bestGlobalConfidence = recognition.getConfidence();
@@ -96,11 +99,12 @@ public class ObjectFinderServiceImpl implements ObjectFinderService{
                 } else if (bestGlobalConfidence == recognition.getConfidence()) {
                     globalRecognitions.add(recognition);
                 }
-            }
+            }*/
         }
+        /*
         if(bestMatch != null) {
             globalRecognitions.add(bestMatch);
-        }
+        }*/
         return globalRecognitions;
     }
     

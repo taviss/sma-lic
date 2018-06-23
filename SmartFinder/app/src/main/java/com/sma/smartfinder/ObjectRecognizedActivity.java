@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +25,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
+import com.sma.object.recognizer.api.Recognition;
 import com.sma.smartfinder.db.ObjectContract;
 import com.sma.smartfinder.http.utils.HTTPUtility;
 
@@ -34,7 +46,9 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -60,11 +74,6 @@ public class ObjectRecognizedActivity extends BaseActivity {
     private ListView listView;
 
     /**
-     * A list of recognitions populated by the server
-     */
-    private List<String> recognitions;
-
-    /**
      * Currently selected recognition
      */
     private String currentSelectionName = null;
@@ -82,6 +91,25 @@ public class ObjectRecognizedActivity extends BaseActivity {
 
     private static final String NONE_OF_THE_ABOVE = "None of the above";
 
+    /**
+     * A list of recognitions populated by the server
+     */
+    private List<Recognition> recognitions;
+
+    public static final Gson customGson = new GsonBuilder().registerTypeHierarchyAdapter(byte[].class,
+            new ByteArrayToBase64TypeAdapter()).create();
+
+    // Using Android's base64 libraries. This can be replaced with any base64 library.
+    private static class ByteArrayToBase64TypeAdapter implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+        public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return Base64.decode(json.getAsString(), Base64.NO_WRAP);
+        }
+
+        public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(Base64.encodeToString(src, Base64.NO_WRAP));
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,10 +118,20 @@ public class ObjectRecognizedActivity extends BaseActivity {
         listView = (ListView) findViewById(R.id.list_view_recognitions);
         objectView = (ImageView) findViewById(R.id.list_item_object_view);
 
-        // If there are recognitions passed to this activity, add the NONE OF THE ABOVE option
-        recognitions = getIntent().getStringArrayListExtra("recognitions");
-        if(recognitions != null) {
-            recognitions.add(NONE_OF_THE_ABOVE);
+        String json = getIntent().getStringExtra("recognitions");
+        recognitions = customGson.fromJson(json, new TypeToken<Collection<Recognition>>(){}.getType());
+
+        //System.out.println(list.get(0).getTitle());
+
+        List<String> recognitionsNames = new ArrayList();
+        if(recognitions != null && recognitions.size() > 0) {
+            // If there are recognitions passed to this activity, add the NONE OF THE ABOVE option
+
+            for (Recognition recognition : recognitions) {
+                recognitionsNames.add(recognition.getTitle());
+            }
+
+            recognitionsNames.add(NONE_OF_THE_ABOVE);
         }
 
         objectLabel = (EditText) findViewById(R.id.object_label_text);
@@ -121,7 +159,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
             showLabelInput();
         } else {
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, recognitions);
+                    android.R.layout.simple_list_item_1, android.R.id.text1, recognitionsNames);
 
             listView.setAdapter(adapter);
 
@@ -158,8 +196,19 @@ public class ObjectRecognizedActivity extends BaseActivity {
                                 try {
                                     Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
                                     if (logged.get()) {
-                                        Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/images", image, extras);
-                                        handleResponse(new String(response.get()));
+                                        // Get the bounded image only
+                                        byte[] boundedImage = null;
+                                        for(Recognition recognition : recognitions) {
+                                            if(recognition.getTitle().equalsIgnoreCase(currentSelectionName)) {
+                                                boundedImage = recognition.getBoundedObject();
+                                                break;
+                                            }
+                                        }
+                                        Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/images", boundedImage , extras);
+                                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                        byte[] byteImage = stream.toByteArray();
+                                        handleResponse(new String(response.get()) ,byteImage, boundedImage);
                                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     }
                                 } catch (IOException | JSONException | InterruptedException | ExecutionException e) {
@@ -252,8 +301,11 @@ public class ObjectRecognizedActivity extends BaseActivity {
                     try {
                         Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
                         if(logged.get()) {
-                            Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/images", image, extras);
-                            handleResponse(new String(response.get()));
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            byte[] byteImage = stream.toByteArray();
+                            Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/images", byteImage, extras);
+                            handleResponse(new String(response.get()), byteImage, byteImage);
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     } catch(IOException|JSONException|InterruptedException|ExecutionException e) {
@@ -279,7 +331,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
      * Handles the response from the server and inserts the newly recognized object into the local database if successful
      * @param response
      */
-    public void handleResponse(String response) {
+    public void handleResponse(String response, byte[] image, byte[] boundedObject) {
         if(response != null) {
             try {
                 // Get the inserted id
@@ -287,15 +339,16 @@ public class ObjectRecognizedActivity extends BaseActivity {
                 int id = (int)jsonObject.get("id");
 
                 // Save the PNG image as byte array(BLOB)
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
+                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                //image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                //byte[] byteArray = stream.toByteArray();
 
                 ContentValues values = new ContentValues();
                 values.put(ObjectContract.Column.ID, id);
                 values.put(ObjectContract.Column.OWNER, SmartFinderApplicationHolder.getApplication().getUser());
                 values.put(ObjectContract.Column.OBJECT_NAME, currentSelectionName);
-                values.put(ObjectContract.Column.IMG, byteArray);
+                values.put(ObjectContract.Column.IMG, image);
+                values.put(ObjectContract.Column.CROPPED_IMG, boundedObject);
                 values.put(ObjectContract.Column.CREATED_AT, new Date().getTime());
                 Uri uri = getContentResolver().insert(ObjectContract.CONTENT_URI, values);
 

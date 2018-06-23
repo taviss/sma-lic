@@ -31,6 +31,7 @@ public class ObjectContract {
         public static final String OWNER = "owner";
         public static final String OBJECT_NAME = "object_name";
         public static final String IMG = "img";
+        public static final String CROPPED_IMG = "cropped_img";
         public static final String CREATED_AT =  "created_at";
     }
 }

@@ -12,4 +12,12 @@ public interface ObjectRecognizer {
      * @return a list of {@link Recognition}
      */
    List<Recognition> identifyImage(byte[] imageBytes);
+
+    /**
+     * Identify objects inside an image
+     * @param imageBytes the image
+     * @param inputSize size of input
+     * @return a list of {@link Recognition}
+     */
+    List<Recognition> identifyImage(byte[] imageBytes, int inputSize);
 }

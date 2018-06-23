@@ -15,4 +15,12 @@ public class CameraTest {
         assertEquals("1", imageCamera.getId());
         assertTrue(imageCamera.getSnapshot() != null);
     }
+
+    @Test
+    public void testURLCamera() throws Exception {
+        URL img = new URL("http://admin:admin123@193.226.12.217:8888/Streaming/Channels/1/picture");
+        ImageCamera imageCamera = new ImageCamera("1", img);
+        assertEquals("1", imageCamera.getId());
+        assertTrue(imageCamera.getSnapshot() != null);
+    }
 }
