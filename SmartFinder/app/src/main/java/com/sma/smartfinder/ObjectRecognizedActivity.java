@@ -83,9 +83,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
      */
     private Bitmap image;
 
-    private Button objectLabelButton = null;
 
-    private EditText objectLabel = null;
 
     private TextView info = null;
 
@@ -134,9 +132,6 @@ public class ObjectRecognizedActivity extends BaseActivity {
             recognitionsNames.add(NONE_OF_THE_ABOVE);
         }
 
-        objectLabel = (EditText) findViewById(R.id.object_label_text);
-        objectLabelButton = (Button) findViewById(R.id.object_label_button);
-
         info = (TextView)findViewById(R.id.object_recognized_info);
 
         // Load the image
@@ -156,7 +151,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
 
         // If there are no recognitions, prompt the user to enter a label
         if(recognitions == null || recognitions.size() == 0) {
-            showLabelInput();
+            startActivity(new Intent(ObjectRecognizedActivity.this, UserRecognitionActivity.class).putExtra("image", image));
         } else {
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, recognitionsNames);
@@ -206,7 +201,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
                                         }
                                         Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/images", boundedImage , extras);
                                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                                         byte[] byteImage = stream.toByteArray();
                                         handleResponse(new String(response.get()) ,byteImage, boundedImage);
                                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -244,7 +239,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
                     currentSelectionName = (String) listView.getItemAtPosition(position);
 
                     if (currentSelectionName.equals(NONE_OF_THE_ABOVE)) {
-                        showLabelInput();
+                        startActivity(new Intent(ObjectRecognizedActivity.this, UserRecognitionActivity.class).putExtra("image", image));
                     } else {
                         builder.setMessage("Accept this recognition?").setPositiveButton("Yes", dialogClickListener)
                                 .setNegativeButton("No", dialogClickListener).show();
@@ -257,75 +252,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Updates activity so the user can input the label for an object
-     */
-    private void showLabelInput() {
-        listView.setVisibility(View.GONE);
-        objectLabel.setVisibility(View.VISIBLE);
-        objectLabelButton.setVisibility(View.VISIBLE);
-        info.setVisibility(View.GONE);
 
-        objectLabelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(objectLabel.getText().toString().isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Object label cannot be empty", Toast.LENGTH_LONG).show();
-                }
-
-                if(image != null) {
-                    // Get the class from the user and the current image
-                    HashMap<String, String> extras = new HashMap<>();
-                    extras.put("imageClass", objectLabel.getText().toString());
-                    extras.put("trainable", "true");
-
-                    String user = SmartFinderApplicationHolder.getApplication().getUser();
-                    String password = SmartFinderApplicationHolder.getApplication().getPass();
-                    String camerasAddress = SmartFinderApplicationHolder.getApplication().getCameraAddress();
-
-                    if(camerasAddress.isEmpty()) {
-                        Log.i(TAG, "No camera address!");
-                        startActivity(new Intent(ObjectRecognizedActivity.this, SettingsActivity.class));
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(), "No camera address!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        return;
-                    }
-
-                    // Try uploading the image using the provided data
-                    try {
-                        Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
-                        if(logged.get()) {
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] byteImage = stream.toByteArray();
-                            Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/images", byteImage, extras);
-                            handleResponse(new String(response.get()), byteImage, byteImage);
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        }
-                    } catch(IOException|JSONException|InterruptedException|ExecutionException e) {
-                        Log.i(TAG, "Exception!");
-                        startActivity(new Intent(ObjectRecognizedActivity.this, SettingsActivity.class));
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(), "Something went wrong! Check credentials!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        return;
-                    }
-                }
-                objectView.setImageBitmap(null);
-            }
-        });
-    }
 
     /**
      * Handles the response from the server and inserts the newly recognized object into the local database if successful

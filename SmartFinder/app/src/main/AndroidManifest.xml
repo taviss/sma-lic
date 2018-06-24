@@ -19,7 +19,9 @@
             android:authorities="com.sma.smartfinder.db.ObjectProvider"
             android:exported="false" />
 
-        <activity android:name="com.sma.smartfinder.MainActivity" />
+        <activity android:name="com.sma.smartfinder.MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name="com.sma.smartfinder.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,7 +55,8 @@
         <activity android:name="com.sma.smartfinder.ChangePasswordActivity" />
         <activity android:name="com.sma.smartfinder.CamerasActivity" />
         <activity android:name="com.sma.smartfinder.AddCameraActivity" />
-        <activity android:name="com.sma.smartfinder.ObjectFoundActivity"></activity>
+        <activity android:name="com.sma.smartfinder.ObjectFoundActivity" />
+        <activity android:name="com.sma.smartfinder.UserRecognitionActivity" android:exported="true"></activity>
     </application>
 
 </manifest>

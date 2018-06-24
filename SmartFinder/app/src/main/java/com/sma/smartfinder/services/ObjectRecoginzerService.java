@@ -126,6 +126,6 @@ public class ObjectRecoginzerService  extends IntentService {
                 Log.i(TAG, e.getMessage());
             }
         }
-        sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_NOT_RECOGNIZED"));
+        sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_NOT_RECOGNIZED").putExtra("image", image));
     }
 }

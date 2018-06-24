@@ -89,6 +89,8 @@ public class TestTFMultibox {
         ByteArrayOutputStream byteArrayOutputStream1 = new ByteArrayOutputStream();
         bufferedImage1 = bufferedImage1.getSubimage(0, 0, size, size);
         ImageIO.write(bufferedImage1, "jpeg", byteArrayOutputStream1);
+        File asdas = new File("D:/TEST_TEST.jpg");
+        ImageIO.write(bufferedImage1, "jpg", asdas);
         getImg = byteArrayOutputStream1.toByteArray();
 
         List<Recognition> recognitionsO = tensorflowMultibox.identifyImage(getImg);
