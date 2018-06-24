@@ -74,7 +74,7 @@ public class ObjectFoundActivity extends BaseActivity {
         findings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                startActivity(new Intent(ObjectFoundActivity.this, ObjectFoundDetailsActivity.class).putExtra("image", recognitions.get(0).getSource()).putExtra("name", recognitions.get(0).getTitle()));
+                startActivity(new Intent(ObjectFoundActivity.this, ObjectFoundDetailsActivity.class).putExtra("image", recognitions.get(i).getSource()).putExtra("name", recognitions.get(i).getTitle()));
                 System.out.println(i + " ");
             }
         });

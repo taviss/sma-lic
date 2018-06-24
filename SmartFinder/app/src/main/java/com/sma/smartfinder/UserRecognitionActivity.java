@@ -33,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -99,8 +100,15 @@ public class UserRecognitionActivity extends AppCompatActivity {
             }
         });
 
-
-        originalBitmap = (Bitmap) getIntent().getParcelableExtra("image");
+        // Load the image
+        String filename = getIntent().getStringExtra("image");
+        try {
+            FileInputStream is = this.openFileInput(filename);
+            originalBitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         linearLayout = (LinearLayout)findViewById(R.id.draw_layout);
 
@@ -111,14 +119,9 @@ public class UserRecognitionActivity extends AppCompatActivity {
                 linearLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 int width  = imageView.getMeasuredWidth();
                 int height = imageView.getMeasuredHeight();
-                if(canvas == null) {
-                    bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, (int)width, (int)height, false);
-                    imageView.setImageBitmap(bitmap);
-                    //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                    canvas = new Canvas(bitmap);
-                    imageView.invalidate();
-                }
+                bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                bitmap = Bitmap.createScaledBitmap(bitmap, (int)width, (int)height, false);
+                imageView.setImageBitmap(bitmap);
             }
         });
 
@@ -135,6 +138,14 @@ public class UserRecognitionActivity extends AppCompatActivity {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                     switch(step) {
                         case 0: {
+                            // Reset the drawing
+                            bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                            bitmap = Bitmap.createScaledBitmap(bitmap, (int)width, (int)height, false);
+                            imageView.setImageBitmap(bitmap);
+                            //imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                            canvas = new Canvas(bitmap);
+                            imageView.invalidate();
+
                             System.out.println("x,y = " + event.getX() + " " + event.getY());
                             coords[0] = event.getX() / width;
                             coords[1] = event.getY() / height;
@@ -225,6 +236,7 @@ public class UserRecognitionActivity extends AppCompatActivity {
                         Future<Boolean> logged = HTTPUtility.login(camerasAddress + "/login/submit", "userName", user, "userPass", password);
                         if(logged.get()) {
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            //Bitmap cropped = Bitmap.createBitmap
                             originalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                             byte[] byteImage = stream.toByteArray();
                             Future<byte[]> response = HTTPUtility.postImage(camerasAddress + "/images", byteImage, extras);

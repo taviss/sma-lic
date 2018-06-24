@@ -32,4 +32,17 @@ public class Image {
     
     @Column(name = "i_trainable")
     private Boolean trainable;
+
+    @Column(name = "i_left")
+    private Float boxLeft;
+
+    @Column(name = "i_top")
+    private Float boxTop;
+
+    @Column(name = "i_right")
+    private Float boxRight;
+
+    @Column(name = "i_bottom")
+    private Float boxBottom;
+
 }

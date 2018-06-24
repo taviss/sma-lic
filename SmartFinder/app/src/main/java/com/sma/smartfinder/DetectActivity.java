@@ -42,7 +42,7 @@ public class DetectActivity extends BaseActivity {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
 
-    private static final int INPUT_SIZE = 224;
+    private static final int INPUT_SIZE = 600;
 
     private Button btnDetectObject, btnToggleCamera;
     /**
@@ -79,6 +79,7 @@ public class DetectActivity extends BaseActivity {
                 bitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false);
                 cameraView.setVisibility(View.GONE);
                 imageViewResult.setVisibility(View.VISIBLE);
+                imageViewResult.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageViewResult.setImageBitmap(bitmap);
                 Intent requestRecognizeIntent = new Intent(DetectActivity.this, ObjectRecoginzerService.class);
 
@@ -118,6 +119,9 @@ public class DetectActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        System.out.println("onResume() DetectActivity");
+        imageViewResult.setVisibility(View.GONE);
+        cameraView.setVisibility(View.VISIBLE);
         cameraView.start();
     }
 

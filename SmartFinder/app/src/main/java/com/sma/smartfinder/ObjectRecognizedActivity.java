@@ -151,7 +151,8 @@ public class ObjectRecognizedActivity extends BaseActivity {
 
         // If there are no recognitions, prompt the user to enter a label
         if(recognitions == null || recognitions.size() == 0) {
-            startActivity(new Intent(ObjectRecognizedActivity.this, UserRecognitionActivity.class).putExtra("image", image));
+            startActivity(new Intent(ObjectRecognizedActivity.this, UserRecognitionActivity.class).putExtra("image", getIntent().getStringExtra("image")));
+            finish();
         } else {
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, recognitionsNames);
@@ -203,7 +204,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
                                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                         image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                                         byte[] byteImage = stream.toByteArray();
-                                        handleResponse(new String(response.get()) ,byteImage, boundedImage);
+                                        handleResponse(new String(response.get()) , byteImage, boundedImage);
                                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     }
                                 } catch (IOException | JSONException | InterruptedException | ExecutionException e) {
@@ -239,7 +240,7 @@ public class ObjectRecognizedActivity extends BaseActivity {
                     currentSelectionName = (String) listView.getItemAtPosition(position);
 
                     if (currentSelectionName.equals(NONE_OF_THE_ABOVE)) {
-                        startActivity(new Intent(ObjectRecognizedActivity.this, UserRecognitionActivity.class).putExtra("image", image));
+                        startActivity(new Intent(ObjectRecognizedActivity.this, UserRecognitionActivity.class).putExtra("image", getIntent().getStringExtra("image")));
                     } else {
                         builder.setMessage("Accept this recognition?").setPositiveButton("Yes", dialogClickListener)
                                 .setNegativeButton("No", dialogClickListener).show();

@@ -9,13 +9,13 @@
     <ImageView
         android:id="@+id/imageViewResult"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:padding="2dp" />
 
     <com.flurgle.camerakit.CameraView
         android:id="@+id/cameraView"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center|top">
 
     </com.flurgle.camerakit.CameraView>
@@ -23,20 +23,20 @@
 
     <Button
         android:id="@+id/btnToggleCamera"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="60dp"
-        android:text="@string/toggle_camera"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|left"
+        android:layout_marginBottom="10dp"
+        android:background="@android:drawable/ic_menu_rotate"
         android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnDetectObject"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom|center"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|right"
         android:layout_marginBottom="10dp"
-        android:text="@string/detect_object"
+        android:background="@android:drawable/ic_menu_camera"
         android:textAllCaps="false" />
 
 </FrameLayout>

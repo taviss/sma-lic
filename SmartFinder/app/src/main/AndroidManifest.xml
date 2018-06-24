@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.sma.smartfinder.DetectActivity" />
+        <activity android:name="com.sma.smartfinder.DetectActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <provider
             android:name="com.sma.smartfinder.db.ObjectProvider"
@@ -22,17 +24,25 @@
         <activity android:name="com.sma.smartfinder.MainActivity"
             android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity android:name="com.sma.smartfinder.LoginActivity">
+        <activity android:name="com.sma.smartfinder.LoginActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.sma.smartfinder.FindObjectActivity" />
+        <activity android:name="com.sma.smartfinder.FindObjectActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
 
-        <service android:name="com.sma.smartfinder.services.ObjectFinderService" />
-        <service android:name="com.sma.smartfinder.services.ObjectRecoginzerService" />
+        <service android:name="com.sma.smartfinder.services.ObjectFinderService"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <service android:name="com.sma.smartfinder.services.ObjectRecoginzerService"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
 
         <receiver android:name="com.sma.smartfinder.receivers.ObjectRecognitionReceiver">
             <intent-filter>
@@ -47,16 +57,36 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.sma.smartfinder.ObjectRecognizedActivity" />
-        <activity android:name="com.sma.smartfinder.SettingsActivity" />
-        <activity android:name="com.sma.smartfinder.DetailsActivity" />
-        <activity android:name="com.sma.smartfinder.ObjectFoundDetailsActivity" />
-        <activity android:name="com.sma.smartfinder.RegisterActivity" />
-        <activity android:name="com.sma.smartfinder.ChangePasswordActivity" />
-        <activity android:name="com.sma.smartfinder.CamerasActivity" />
-        <activity android:name="com.sma.smartfinder.AddCameraActivity" />
-        <activity android:name="com.sma.smartfinder.ObjectFoundActivity" />
-        <activity android:name="com.sma.smartfinder.UserRecognitionActivity" android:exported="true"></activity>
+        <activity android:name="com.sma.smartfinder.ObjectRecognizedActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name="com.sma.smartfinder.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name="com.sma.smartfinder.DetailsActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name="com.sma.smartfinder.ObjectFoundDetailsActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name="com.sma.smartfinder.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name="com.sma.smartfinder.ChangePasswordActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name="com.sma.smartfinder.CamerasActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name="com.sma.smartfinder.AddCameraActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name="com.sma.smartfinder.ObjectFoundActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name="com.sma.smartfinder.UserRecognitionActivity" android:exported="true"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
     </application>
 
 </manifest>

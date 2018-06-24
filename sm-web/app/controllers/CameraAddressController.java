@@ -73,4 +73,10 @@ public class CameraAddressController extends Controller {
             
         }
     }
+
+    @Security.Authenticated(Secured.class)
+    @Transactional
+    public Result getCamerasForUser(String name) {
+        return ok();
+    }
 }

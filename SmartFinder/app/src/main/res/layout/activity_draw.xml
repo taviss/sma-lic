@@ -17,7 +17,8 @@
     <ImageView
         android:id="@+id/draw_view"
         android:layout_width="match_parent"
-        android:layout_height="450dp" />
+        android:layout_height="450dp"
+        android:background="@mipmap/ic_launcher" />
 
     <Button
         android:id="@+id/accept_drawing"

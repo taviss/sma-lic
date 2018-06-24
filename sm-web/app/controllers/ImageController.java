@@ -74,5 +74,11 @@ public class ImageController extends Controller {
         }
         
     }
+
+    @Security.Authenticated(Secured.class)
+    @Transactional
+    public Result getImagesForUser(String user) {
+        return ok();
+    }
     
 }

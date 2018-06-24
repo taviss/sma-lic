@@ -77,6 +77,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     private BottomNavigationView bottomNavigationView;
 
+    private static final int THUMBNAIL_SIZE = 224;
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(id != LOADER_ID) {
@@ -125,7 +127,7 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
                 ((TextView) view).setText(name);
             } else if(view.getId() == R.id.list_item_background) {
                 byte[] img = cursor.getBlob(columnIndex);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+                Bitmap bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeByteArray(img, 0, img.length), THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
                 ((ImageView)view).setImageBitmap(bitmap);
             }
             return true;
