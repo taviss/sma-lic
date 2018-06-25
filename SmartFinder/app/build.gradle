@@ -36,5 +36,5 @@ dependencies {
     compile 'com.android.support:design:26+'
     compile 'com.android.support:recyclerview-v7:26+'
     compile 'com.android.support:cardview-v7:26+'
-    implementation files('D:/Facultate/LIC_SMA/sma-lic/SmartFinder/lib/object-recognizer.api-2.0-SNAPSHOT.jar')
+    implementation files("$rootProject.projectDir/lib/object-recognizer.api-2.0-SNAPSHOT.jar")
 }

@@ -208,10 +208,10 @@ public class UserRecognitionActivity extends AppCompatActivity {
                     HashMap<String, String> extras = new HashMap<>();
                     extras.put("imageClass", label);
                     extras.put("trainable", "true");
-                    extras.put("left", String.valueOf(coords[0]));
-                    extras.put("top", String.valueOf(coords[1]));
-                    extras.put("right", String.valueOf(coords[2]));
-                    extras.put("bottom", String.valueOf(coords[3]));
+                    extras.put("boxLeft", String.valueOf(coords[0]));
+                    extras.put("boxTop", String.valueOf(coords[1]));
+                    extras.put("boxRight", String.valueOf(coords[2]));
+                    extras.put("boxBottom", String.valueOf(coords[3]));
 
                     String user = SmartFinderApplicationHolder.getApplication().getUser();
                     String password = SmartFinderApplicationHolder.getApplication().getPass();
