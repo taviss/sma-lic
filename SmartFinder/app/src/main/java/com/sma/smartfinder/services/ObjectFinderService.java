@@ -1,6 +1,7 @@
 package com.sma.smartfinder.services;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -9,17 +10,39 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
+import com.sma.object.recognizer.api.Recognition;
+import com.sma.smartfinder.ObjectFoundActivity;
 import com.sma.smartfinder.SettingsActivity;
 import com.sma.smartfinder.http.utils.HTTPUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -90,6 +113,20 @@ public class ObjectFinderService extends IntentService {
 
     }
 
+    public static final Gson customGson = new GsonBuilder().registerTypeHierarchyAdapter(byte[].class,
+            new ByteArrayToBase64TypeAdapter()).create();
+
+    // Using Android's base64 libraries. This can be replaced with any base64 library.
+    private static class ByteArrayToBase64TypeAdapter implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+        public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return Base64.decode(json.getAsString(), Base64.NO_WRAP);
+        }
+
+        public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(Base64.encodeToString(src, Base64.NO_WRAP));
+        }
+    }
+
     /**
      * Handles the server response and notifies accordingly
      * @param response
@@ -103,7 +140,23 @@ public class ObjectFinderService extends IntentService {
                 JSONArray jsonArray = new JSONArray(new String(response));
 
                 if (jsonArray.length() != 0) {
-                    sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_FOUND").putExtra("recognitions", new String(response)));
+                    List<Recognition> recognitionList = customGson.fromJson(new String(response), new TypeToken<Collection<Recognition>>(){}.getType());
+
+                   ArrayList<String> recogs = new ArrayList<>();
+
+                    for(Recognition recognition : recognitionList) {
+                        try {
+                            BufferedOutputStream bos = new BufferedOutputStream(openFileOutput(recognition.getTitle() + recognition.getId() + ".png", Context.MODE_PRIVATE));
+                            bos.write(recognition.getSource());
+                            bos.flush();
+                            bos.close();
+                            recogs.add(recognition.getTitle() + ":" + recognition.getId());
+                        } catch (IOException e) {
+                            //
+                        }
+                    }
+
+                    sendBroadcast(new Intent("com.sma.smartfinder.action.OBJECT_FOUND").putStringArrayListExtra("recognitions", recogs));
                     return;
                 }
             } catch(JSONException e) {

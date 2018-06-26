@@ -163,7 +163,7 @@ public class UserRecognitionActivity extends AppCompatActivity {
                             // Change the color by subtracting an integer.
                             paint.setColor(mColorAccent);
                             paint.setStyle(Paint.Style.STROKE);
-                            paint.setStrokeWidth(2f);
+                            paint.setStrokeWidth(5f);
                             System.out.format("Print at (%d %d %d %d)",
                                     (int)(coords[0] * imageView.getWidth()),(int)(coords[1]*imageView.getHeight()), (int)(coords[2]*imageView.getWidth()), (int)(coords[3]*imageView.getHeight()));
                             System.out.println();

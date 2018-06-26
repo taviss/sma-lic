@@ -12,6 +12,9 @@ import com.sma.smartfinder.ObjectFoundActivity;
 import com.sma.smartfinder.ObjectFoundDetailsActivity;
 import com.sma.smartfinder.SmartFinderApplication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by octavian.salcianu on 3/22/2018.
  *
@@ -35,8 +38,8 @@ public class ObjectFindReceiver extends BroadcastReceiver {
                     context.startActivity(objectRecognizedIntent);
                 } else {
                     Intent objectRecognizedIntent = new Intent(context, ObjectFoundActivity.class);
-                    String recogs = intent.getStringExtra("recognitions");
-                    objectRecognizedIntent.putExtra("recognitions", intent.getStringExtra("recognitions"));
+                    ArrayList<String> recogs = intent.getStringArrayListExtra("recognitions");
+                    objectRecognizedIntent.putStringArrayListExtra("recognitions", recogs);
                     context.startActivity(objectRecognizedIntent);
                 }
             }
